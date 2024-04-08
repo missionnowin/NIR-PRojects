@@ -3,7 +3,7 @@
 - B1 - basic example from geant4/examples/basic/B1 <br />
 - field2 - simple example with particle in e/m field  <br />
 - kon1 - basic example with particle passing throught breaking target to some detector(detecting volume)
-4. projects <br />
+2. projects <br />
 - mpc-detector - microchannel plates detector model
 
 All projects were initialy build on Geant4 v.11.2.1, OS Windows so they may contains some platform specific libraries for C++ + platrom specific .mac files, but they can be easily transfered to any other OS. For some projects additional software may be required (e.g. ROOT) <br />
