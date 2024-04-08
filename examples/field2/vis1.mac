@@ -1,0 +1,30 @@
+# Visualisation using OpenGL
+
+/control/verbose 0
+/run/verbose 0
+/vis/verbose 2
+/tracking/verbose 0
+#/stepping/verbose 3
+/vis/scene/create
+
+/vis/open OGLIX 600
+#/vis/open ATree
+#/vis/open VRML2FILE
+#/vis/open DAWNFILE
+#/vis/open HepRepFile
+#/vis/open RayTracer
+
+/vis/viewer/set/viewpointThetaPhi 270 0 deg
+/vis/scene/add/trajectories
+/vis/viewer/set/style w
+
+/tracking/storeTrajectory 2
+/vis/scene/endOfEventAction accumulate
+
+/gun/energy 1 MeV
+/gun/position 0 0 -23 cm
+
+ 
+# Run
+/run/beamOn 1
+

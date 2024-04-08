@@ -1,0 +1,17 @@
+
+This example shows some ways of detctor simulation with using magnetic field.
+
+1)   Global, uniform, and transverse magnetic field can be 
+     applied using G4GlobalMagFieldMessenger, instantiated in 
+     DetectorConstruction.cc with a non zero field value,
+     or via interactive command:
+     
+     /globalField/setValue 0.2 0 0 tesla
+
+2)   Global and local uniform and transverse (along X) magnetic field can be 
+     applied using FieldSetup(), instantiated in 
+     DetectorConstruction.cc 
+     or via interactive command:
+     
+     /fild/setFieldX 0.2 0 0 tesla
+
