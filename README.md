@@ -1,8 +1,8 @@
 ## Repo now contains:
 1. examples <br />
-    ~ B1 - Basic example from geant4/examples/basic/B1 <br />
-    ~ field2 - Simple example with particle in e/m field  <br />
-    ~ kon1 - Basic example with particle passing throught breaking target to some detector(detecting volume)
+    ~ B1 - basic example from geant4/examples/basic/B1 <br />
+    ~ field2 - simple example with particle in e/m field  <br />
+    ~ kon1 - basic example with particle passing throught breaking target to some detector(detecting volume)
 4. projects <br />
     ~ mpc-detector - microchannel plates detector model
 
