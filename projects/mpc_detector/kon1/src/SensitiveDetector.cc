@@ -8,8 +8,8 @@
 using namespace std;
 
 SensitiveDetector::SensitiveDetector(G4String name): G4VSensitiveDetector(name),
-						     HIST_MAX(100 * um),
-						     HIST_MIN(-100 * um)
+						     HIST_MAX(110 * um),
+						     HIST_MIN(-110 * um)
 {
   for(int i = 0; i<NOBINS; i++)
     histogram[i] = 0;
