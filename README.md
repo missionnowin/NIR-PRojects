@@ -38,7 +38,7 @@ Windows:
 ### 3. Compile<br />
    Winows: build via Visual Studio or any other tool  <br />
    Linux:  make -j8
-### 5. Run<br />
+### 4. Run<br />
    Linux: run executable from same teriminal or new terminal after source geant4.sh  <br />
    Windows: run executable from sane cmd/shell or new session after call geant4.bat  <br />
    Or setup proper enviroment with all required imports
