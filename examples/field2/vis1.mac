@@ -7,7 +7,7 @@
 #/stepping/verbose 3
 /vis/scene/create
 
-/vis/open OGLIX 600
+/vis/open
 #/vis/open ATree
 #/vis/open VRML2FILE
 #/vis/open DAWNFILE
@@ -20,11 +20,9 @@
 
 /tracking/storeTrajectory 2
 /vis/scene/endOfEventAction accumulate
+/gun/position -15 0 0
+/gun/momentum 1 1 0
+/gun/energy 0.2 MeV
 
-/gun/energy 1 MeV
-/gun/position 0 0 -23 cm
-
- 
 # Run
 /run/beamOn 1
-
