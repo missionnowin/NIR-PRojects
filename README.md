@@ -14,13 +14,30 @@ All projects were initialy build on Geant4 v.11.2.1, OS Windows so they may cont
 4. HepRep vis tools (optional)
 
 ## Build & run order: 
-1. Windows: call geant4.bat  <br />
-   Linux: source geant4.sh in ${geant4-install}/bin dir
-2. go to ${your_project}
-3. cd .. -> mkdir ${your_project}-build -> cd ${your_project}-build
-4. cmake ../${your_project}
-5. Winows: build via Visual Studio or any other tool  <br />
-   Linux: make -j8
-6. Linux -> run from same teriminal or new terminal after source geant4.sh  <br />
-   Windows -> run from cmd or new terminal after call geant4.bat  <br />
+### 1. Pre-build setup<br />
+```
+   cd ${geant4-install}/bin
+```   
+Windows:
+```
+   call geant4.bat
+```
+   Linux:
+```
+   source geant4.sh
+```
+### 2. Build
+```
+   cd ${your_project}/
+   cd ..
+   mkdir ${your_project}-build
+   cd ${your_project}-build/
+   cmake ../${your_project}
+```
+### 3. Compile<br />
+   Winows: build via Visual Studio or any other tool  <br />
+   Linux:  make -j8
+### 5. Run<br />
+   Linux: run executable from same teriminal or new terminal after source geant4.sh  <br />
+   Windows: run executable from sane cmd/shell or new session after call geant4.bat  <br />
    Or setup proper enviroment with all required imports
