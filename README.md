@@ -6,7 +6,8 @@
 ### 2. projects <br />
 - mpc-detector - microchannel plates detector model
 
-All projects were initialy build on Geant4 v.11.2.1, OS Windows so they may contains some platform specific libraries for C++ + platrom specific .mac files, but they can be easily transfered to any other OS. For some projects additional software may be required (e.g. ROOT) <br />
+### Note: <br />
+All projects were initialy build on Geant4 v.11.2.1 + OS Windows so they may contains some platform specific libraries for C++ & platrom-specific .mac files, but they can be easily transfered to any other OS. For some projects additional software may be required (e.g. ROOT) <br />
 ## Required software:
 1. Geant4
 2. CMake
