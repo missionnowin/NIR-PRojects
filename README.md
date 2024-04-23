@@ -4,7 +4,7 @@
 - field2 - simple example with particle in e/m field  <br />
 - kon1 - basic example with particle passing throught breaking target to some detector(detecting volume)
 ### 2. projects <br />
-- mpc-detector - microchannel plates detector model
+- mpc-detector - microchannel plates detector model 
 - muon-flight - mini-project with simulation of muons flight through atmosphere (20 - 0 km). (Maybe not working now)
 
 ### Note: <br />
