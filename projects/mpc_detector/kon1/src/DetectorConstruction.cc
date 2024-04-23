@@ -23,8 +23,7 @@ World::World(double size_x, double size_y, double size_z,  G4Material *mater_): 
 	//double size05 = size/2;
 	solid = new G4Box("world", sizex/2, sizey/2, sizez/2);
 	logic = new G4LogicalVolume( solid, mater, "World", 0, 0, 0);
-	physic = new G4PVPlacement(0, G4ThreeVector(), logic, "World",
-				   0, false, 0);             
+	physic = new G4PVPlacement(0, G4ThreeVector(), logic, "World", 0 , false, 0);             
 }
 
 DetectorConstruction::DetectorConstruction()

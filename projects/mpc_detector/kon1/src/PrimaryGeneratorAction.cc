@@ -27,10 +27,10 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   // default particle kinematic
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   G4String particleName;
-  G4ParticleDefinition* particle = particleTable->FindParticle(particleName="proton");
+  G4ParticleDefinition* particle = particleTable->FindParticle(particleName="mu-");
   fParticleGun->SetParticleDefinition(particle);
-  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0., 1., 0.));
-  fParticleGun->SetParticlePosition(G4ThreeVector(0*cm, -200 * um, 0 * um));
+  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0., 0., 1.));
+  fParticleGun->SetParticlePosition(G4ThreeVector(0*cm, 0 * um, -200 * um));
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

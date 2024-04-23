@@ -46,7 +46,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4double densityAir = 1.2754 * 1000 * kg / mm3;
     G4Material* originalMaterial = nist->FindOrBuildMaterial("G4_AIR");
     G4Material* compressedAir = new G4Material("AirCompr", densityAir, originalMaterial);
-    world = new World(400 * cm, 400 * cm, 200 * cm, compressedAir);
+    world = new World(40 * km, 40 * km, 40 * km, Mat("G4_AIR"));
   
     //Elements
     G4Element* Si = nist->FindOrBuildElement("Si");
@@ -77,9 +77,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     */
 
     //Detector
-    G4Box *solidTgt = new G4Box("solidTgt", 400*cm, 400*cm, 1*cm);
+    G4Box *solidTgt = new G4Box("solidTgt", 40*km, 40*km, 1*um);
     G4LogicalVolume *logiclTgt = new G4LogicalVolume(solidTgt, SiO2PbO, "logiclTgt");
-    G4PVPlacement* physilTgt = new G4PVPlacement(rotation, G4ThreeVector(0, 0, 199 * cm), logiclTgt, "physilTgt", world->getLogic(), false, 0);
+    G4PVPlacement* physilTgt = new G4PVPlacement(rotation, G4ThreeVector(0, 0, 0 * cm), logiclTgt, "physilTgt", world->getLogic(), false, 0);
     G4UserLimits* electronLimits = new G4UserLimits();
     electronLimits->SetUserMinEkine(10. * CLHEP::keV); // Set minimum kinetic energy for electrons
     logiclTgt->SetUserLimits(electronLimits);
