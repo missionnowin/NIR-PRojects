@@ -30,7 +30,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   G4ParticleDefinition* particle = particleTable->FindParticle(particleName="mu-");
   fParticleGun->SetParticleDefinition(particle);
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0., 0., 1.));
-  fParticleGun->SetParticlePosition(G4ThreeVector(0 * cm, 0 * cm, -20 * km));
+  fParticleGun->SetParticlePosition(G4ThreeVector(0 * cm, 0 * cm, -10 * km));
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

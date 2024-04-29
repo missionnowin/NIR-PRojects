@@ -46,9 +46,13 @@ int main(int argc,char** argv)
 	runManager->SetUserInitialization(detector_c);
 
 //22222 Physics list:
-	G4VModularPhysicsList* physicsList = new QGSP_BERT_HP;
+	G4VModularPhysicsList* physicsList = new G4VModularPhysicsList();
+	physicsList->RegisterPhysics(new G4EmPenelopePhysics);
 	// Set electron tracking threshold to 100 keV
-
+	physicsList->SetCutValue(10 * eV, "e+");
+	physicsList->SetCutValue(10 * eV, "e-");
+	physicsList->SetCutValue(10 * eV, "gamma");
+	physicsList->SetDefaultCutValue(10 * eV);
 
     runManager->SetUserInitialization(physicsList);
 

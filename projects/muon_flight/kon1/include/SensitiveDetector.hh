@@ -10,7 +10,7 @@ class G4TouchableHistory;
 class SensitiveDetector: public G4VSensitiveDetector
 {
 private:
-  static const int NOBINS = 110;
+  static const int NOBINS = 100;
   const double HIST_MAX;
   const double HIST_MIN;
   int histogram[NOBINS];
