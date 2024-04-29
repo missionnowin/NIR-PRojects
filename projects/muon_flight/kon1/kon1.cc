@@ -46,8 +46,7 @@ int main(int argc,char** argv)
 	runManager->SetUserInitialization(detector_c);
 
 //22222 Physics list:
-	G4VModularPhysicsList* physicsList = new G4VModularPhysicsList();
-	physicsList->RegisterPhysics(new G4EmLivermorePhysics);
+	G4VModularPhysicsList* physicsList = new QGSP_BERT_HP;
 	// Set electron tracking threshold to 100 keV
     runManager->SetUserInitialization(physicsList);
 

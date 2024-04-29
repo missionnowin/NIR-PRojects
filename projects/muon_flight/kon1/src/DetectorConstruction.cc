@@ -43,7 +43,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 
     //Worls
-    G4double densityAir = 1.2754 * 1000 * kg / mm3;
+    G4double densityAir = 1.2754 * 1e6 * kg / m3;
     G4Material* originalMaterial = nist->FindOrBuildMaterial("G4_AIR");
     G4Material* compressedAir = new G4Material("AirCompr", densityAir, originalMaterial);
     world = new World(20 * km, 20 * km, 20 * km, Mat("G4_AIR"));
@@ -79,7 +79,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     //Detector
     G4Box *solidTgt = new G4Box("solidTgt", 20*km, 20*km, 1*m);
     G4LogicalVolume *logiclTgt = new G4LogicalVolume(solidTgt, SiO2PbO, "logiclTgt");
-    G4PVPlacement* physilTgt = new G4PVPlacement(rotation, G4ThreeVector(0, 0, 10 * km - 0.5 * m), logiclTgt, "physilTgt", world->getLogic(), false, 0);
+    G4PVPlacement* physilTgt = new G4PVPlacement(rotation, G4ThreeVector(0, 0, 10 * km), logiclTgt, "physilTgt", world->getLogic(), false, 0);
     G4VisAttributes* orange = new G4VisAttributes(G4Colour(1.0,0.5,0.0));
     
     //Detector
