@@ -21,14 +21,14 @@ G4bool SensitiveDetector::ProcessHits(G4Step *step, G4TouchableHistory *hist)
       double energy_dep = step->GetTotalEnergyDeposit();
       G4String volume_sens = step->GetTrack()->GetVolume()->GetName();
       G4int particle_code = step->GetTrack()->GetDynamicParticle()->GetPDGcode();
-      if(volume_sens && particle_code == 11 && energy_kin > 0 * eV) {
-          //G4cout << "Coordinate of electron = " << G4BestUnit(energy_kin, "Energy") << " in sensitive volume: " << volume_sens << G4endl;
+      if(volume_sens) {
+          G4cout << "Coordinate of " << step->GetTrack()->GetDynamicParticle()->GetParticleDefinition()->GetParticleName() << " = " << G4BestUnit(energy_kin, "Energy") << " in sensitive volume : " << volume_sens << G4endl;
           double bin_width = (HIST_MAX - HIST_MIN) / NOBINS;
           int index = int(floor((energy_kin - HIST_MIN)/bin_width));
           if (index >= 0 && index < NOBINS) {
               histogram[index]++;
           }
-         step->GetTrack()->SetTrackStatus(fStopAndKill);
+         //step->GetTrack()->SetTrackStatus(fStopAndKill);
       }
   return true;
 }
