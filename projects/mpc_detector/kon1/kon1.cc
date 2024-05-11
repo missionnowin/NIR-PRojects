@@ -2,7 +2,6 @@
 #include "ActionInitialization.hh"
 #include "PrimaryGeneratorAction.hh"
 #include "SteppingVerbose.hh"
-#include "MyPhysicsList.hh"
 #include <G4RunManager.hh>
 #include <G4UImanager.hh>
 #include <G4UIterminal.hh>
@@ -11,16 +10,10 @@
 #include "G4UIExecutive.hh"
 #include<G4UserRunAction.hh>
 #include<G4Run.hh>
-#include<iostream>
-#include<string>
-#include<G4EmLivermorePhysics.hh>
 #include<CLHEP/Random/Random.h>
 #include <G4VModularPhysicsList.hh>
 #include <G4EmParameters.hh>
-#include<io.h>
-#include <QGSP_BERT_HP.hh>
 #include <G4EmPenelopePhysics.hh>
-#include<time.h>
 
 
 using namespace CLHEP;

@@ -6,7 +6,7 @@
 ### 2. projects <br />
 - mpc-detector - microchannel plates detector model 
 - muon-flight - mini-project with simulation of cosmic muons flight through atmosphere (20 - 0 km). (Maybe not working now)
-- radioactive-decay - project with simulation of radioactive decay of some ions. Planned to be a simulation of 3D-material with some radioactive ion inclusions and some detecting volume for analyzing outputs.
+- radioactive-decay - project with simulation of radioactive decay of some ions. Planned to be a simulation of 3D-material with some radioactive ion inclusions and some detecting volume as a detector model. NOT real detector model, this task is not considered 
 
 ### Note: <br />
 All projects were initialy build on Geant4 v.11.2.1 + OS Windows so they may contains some platform specific libraries for C++ & platrom-specific .mac files, but they can be easily transfered to any other OS. For some projects additional software may be required (e.g. ROOT) <br />
