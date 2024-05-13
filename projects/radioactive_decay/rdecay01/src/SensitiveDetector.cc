@@ -8,7 +8,7 @@
 using namespace std;
 
 SensitiveDetector::SensitiveDetector(G4String name): G4VSensitiveDetector(name),
-                                                        HIST_MAX(100 * keV),
+                                                        HIST_MAX(0 * keV),
                                                         HIST_MIN(1000 * keV)
 {
   for(int i = 0; i<NOBINS; i++)
@@ -21,8 +21,8 @@ G4bool SensitiveDetector::ProcessHits(G4Step *step, G4TouchableHistory *hist)
       double energy_dep = step->GetTotalEnergyDeposit();
       G4String volume_sens = step->GetTrack()->GetVolume()->GetName();
       G4int particle_code = step->GetTrack()->GetDynamicParticle()->GetPDGcode();
-      if(volume_sens) {
-          G4cout << "Energy of " << step->GetTrack()->GetDynamicParticle()->GetParticleDefinition()->GetParticleName() << " = " << G4BestUnit(energy_kin, "Energy") << " in sensitive volume : " << volume_sens << G4endl;
+      if(volume_sens && step->GetTrack()->GetDynamicParticle()->GetParticleDefinition()->GetParticleName() == "gamma") {
+          //G4cout << "Energy of " << step->GetTrack()->GetDynamicParticle()->GetParticleDefinition()->GetParticleName() << " = " << G4BestUnit(energy_kin, "Energy") << " in sensitive volume : " << volume_sens << G4endl;
           double bin_width = (HIST_MAX - HIST_MIN) / NOBINS;
           int index = int(floor((energy_kin - HIST_MIN)/bin_width));
           if (index >= 0 && index < NOBINS) {
@@ -48,7 +48,7 @@ SensitiveDetector::~SensitiveDetector()
   for(int i = 0; i<NOBINS; i++)
   {
     double energy = i * bin_width + HIST_MIN;
-    file << std::setw(15) << energy/eV << " "
+    file << std::setw(15) << energy/keV << " "
 	 << std::setw(15) << histogram[i] << std::endl;
   }
   file.close();

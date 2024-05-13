@@ -38,26 +38,22 @@
 #include "G4Geantino.hh"
 #include "G4SystemOfUnits.hh"
 #include "Randomize.hh"
+#include "G4ChargedGeantino.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 PrimaryGeneratorAction::PrimaryGeneratorAction()
 {
-  G4int n_particle = 10;
-  fParticleGun  = new G4ParticleGun(n_particle);
-  fParticleGun->SetParticleEnergy(0*eV);
-  fParticleGun->SetParticlePosition(G4ThreeVector(0.,0.,0.));
-  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(1.,0.,0.));     
-  G4int Z = 92, A = 238;
-  G4double ionCharge = 0. * eplus;
-  G4double excitEnergy = 0. * keV;
+	G4int n_particle = 1;
+	fParticleGun = new G4ParticleGun(n_particle);
 
-  G4ParticleDefinition* ion = G4IonTable::GetIonTable()->GetIon(Z, A, excitEnergy);
-  fParticleGun->SetParticleDefinition(ion);
-  fParticleGun->SetParticleCharge(ionCharge);
-  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0., 0., 1.));
-  fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., 0.));
-  fParticleGun->SetParticleMomentum(0. * GeV);
+	// default particle kinematic
+	G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+	G4ParticleDefinition* particle = particleTable->FindParticle("chargedgeantino");
+	fParticleGun->SetParticleDefinition(particle);
+	fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0., 0., 1.));
+	fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., 0.));
+	fParticleGun->SetParticleMomentum(0. * GeV);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -73,6 +69,21 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {  
   //create vertex
   //   
-  fParticleGun->GeneratePrimaryVertex(anEvent);
+		G4int Z = 92, A = 238;
+		G4double ionCharge = 0. * eplus;
+		G4double excitEnergy = 0. * keV;
+		G4ParticleDefinition* ion = G4IonTable::GetIonTable()->GetIon(Z, A, excitEnergy);
+		fParticleGun->SetParticleDefinition(ion);
+		fParticleGun->SetParticleCharge(ionCharge);
+		fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0., 0., 1.));
+		fParticleGun->SetParticleMomentum(0. * GeV);
+		for (int j = 0; j < 101; j++) {
+			for (int i = 0; i < 101; i++) {
+				for (int k = 0; i < 101; i++) {
+					fParticleGun->SetParticlePosition(G4ThreeVector(-50 + i * CLHEP::mm, -50 + j * CLHEP::mm, -50 + k * CLHEP::mm));
+					fParticleGun->GeneratePrimaryVertex(anEvent);
+				}
+			}
+	}
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

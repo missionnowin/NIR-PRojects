@@ -252,6 +252,7 @@ void Run::EndOfRun()
         << G4BestUnit(fEkin,"Energy");
  G4cout << "\n ===========================================================\n";
  G4cout << G4endl;
+
  if (nbEvents == 0) { return; }
  
  G4int prec = 4, wid = prec + 2;
@@ -280,7 +281,7 @@ void Run::EndOfRun()
     else if (meanLife < 0.) G4cout << "\tstable" << G4endl;
     else G4cout << G4endl;
  }
- 
+ /*
  //energy momentum balance
  //
 
@@ -369,6 +370,7 @@ void Run::EndOfRun()
              << "   ---> <actv> = "  << G4BestUnit(actv, "Activity") << "\n";
    }
  }
+ */
  G4cout << G4endl;
  
  //normalize histograms

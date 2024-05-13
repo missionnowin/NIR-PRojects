@@ -41,7 +41,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4NistManager* nist = G4NistManager::Instance();
 
     //Worls
-    world = new World(400 * cm, 400 * cm, 400 * cm, Mat("G4_AIR"));
+    world = new World(4 * cm, 4 * cm, 4 * cm, Mat("G4_AIR"));
     G4RotationMatrix* rotation = new G4RotationMatrix();
     rotation->rotateX(-0 * degree);
 
@@ -78,15 +78,15 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     granite->AddElement(Cr, 0.001);
 
     //Box
-    G4Box* solidTgt = new G4Box("solidTgt", 400 * cm, 400 * cm, 400 * cm);
-    G4LogicalVolume* logiclTgt = new G4LogicalVolume(solidTgt, Mat("G4_Galactic"), "logiclTgt");
-    G4PVPlacement* physilTgt = new G4PVPlacement(rotation, G4ThreeVector(0, 0, 0 * cm), logiclTgt, "physilTgt", world->getLogic(), false, 0);
+    G4Box* solidTgt = new G4Box("solidTgt", 4 * cm, 4 * cm, 0.1 * cm);
+    G4LogicalVolume* logiclTgt = new G4LogicalVolume(solidTgt, Mat("G4_AIR"), "logiclTgt");
+    G4PVPlacement* physilTgt = new G4PVPlacement(rotation, G4ThreeVector(0, 0, -1.5 * cm), logiclTgt, "physilTgt", world->getLogic(), false, 0);
     G4VisAttributes* orange = new G4VisAttributes(G4Colour(1.0, 0.5, 0.0));
 
     //Granite
-    G4Box* solidBox = new G4Box("solidBox", 100 * cm, 100 * cm, 100 * cm);
-    G4LogicalVolume* logicBox = new G4LogicalVolume(solidBox, granite, "logicBox");
-    G4PVPlacement* physicsBox = new G4PVPlacement(rotation, G4ThreeVector(0, 0, 0), logicBox, "physicsBox", world->getLogic(), false, 0);
+   // G4Box* solidBox = new G4Box("solidBox", 1 * cm, 1 * cm, 1 * cm);
+   // G4LogicalVolume* logicBox = new G4LogicalVolume(solidBox, granite, "logicBox");
+   // G4PVPlacement* physicsBox = new G4PVPlacement(rotation, G4ThreeVector(0, 0, 0), logicBox, "physicsBox", world->getLogic(), false, 0);
 
     //Detector
     SensitiveDetector* detector = new SensitiveDetector("SD");
@@ -95,7 +95,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
     orange->SetForceWireframe(true);
     logiclTgt->SetVisAttributes(orange);
-    logicBox -> SetVisAttributes(orange);
+    //logicBox -> SetVisAttributes(orange);
 
     SetSensitiveDetector(logiclTgt, detector);
     world->getLogic()->SetVisAttributes(G4VisAttributes::GetInvisible());

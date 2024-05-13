@@ -63,10 +63,11 @@ void EventAction::EndOfEventAction(const G4Event* evt)
  G4int printProgress = G4RunManager::GetRunManager()->GetPrintProgress();
  //printing survey
  //
+ /*
  if (evtNb%printProgress == 0) 
    G4cout << "    End of event. Decay chain:" << fDecayChain 
           << G4endl << G4endl;
- 
+ */
  //total visible energy
  G4AnalysisManager::Instance()->FillH1(9, fEvisTot);
  Run* run 
