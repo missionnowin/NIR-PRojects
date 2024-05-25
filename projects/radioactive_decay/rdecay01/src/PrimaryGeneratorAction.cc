@@ -77,10 +77,13 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 		fParticleGun->SetParticleCharge(ionCharge);
 		fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0., 0., 1.));
 		fParticleGun->SetParticleMomentum(0. * GeV);
-		for (int j = 0; j < 101; j++) {
-			for (int i = 0; i < 101; i++) {
-				for (int k = 0; i < 101; i++) {
-					fParticleGun->SetParticlePosition(G4ThreeVector(-50 + i * CLHEP::mm, -50 + j * CLHEP::mm, -50 + k * CLHEP::mm));
+		for (int i = 0; i < 3; i++) {
+			double xCord = -5 + 5 * i;
+			for (int j = 0; j < 3; j++) {
+				double yCord = -5 + 5 * j;
+				for (int k = 0; k < 3; k++) {
+					double zCord = -5 + 5 * k;
+					fParticleGun->SetParticlePosition(G4ThreeVector(xCord * mm, yCord * mm, zCord * mm));
 					fParticleGun->GeneratePrimaryVertex(anEvent);
 				}
 			}

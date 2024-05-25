@@ -1,0 +1,24 @@
+#ifndef SENSITIVEDETECTOR
+#define SENSITIVEDETECTOR
+
+#include<G4VSensitiveDetector.hh>
+
+class G4Step;
+class G4TouchableHistory;
+
+
+class SensitiveDetector: public G4VSensitiveDetector
+{
+private:
+  double edep_sum;
+  double etot_sum;
+  static const int n_det=10;
+  double edep_det[n_det+1];
+public:
+  SensitiveDetector(G4String name);
+  ~SensitiveDetector();
+  G4bool ProcessHits(G4Step *step, G4TouchableHistory *hist);
+  void EndOfEvent(G4HCofThisEvent*);
+};
+
+#endif /* SENSITIVEDETECTOR */

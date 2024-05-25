@@ -5,3 +5,6 @@
 /projects/muon_flight/kon1-build/*
 /examples/kon1-build/*
 /projects/radioactive_decay/rdecay01-build/*
+/projects/ion_bp/ion_bp-build/*
+/projects/ion_bp_plus_mpc_detector/kon1-build*
+/projects/urqmd_integration/HepMCEx02-build/*

@@ -1,0 +1,54 @@
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...... 
+
+#ifndef PrimaryGeneratorAction_h
+#define PrimaryGeneratorAction_h 1
+
+#include "G4VUserPrimaryGeneratorAction.hh"
+#include "globals.hh"
+
+class PrimaryGeneratorAction1;
+class PrimaryGeneratorAction2;
+class PrimaryGeneratorAction3;
+class PrimaryGeneratorAction4;
+class PrimaryGeneratorMessenger;
+
+class G4ParticleGun;
+class G4Event;
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
+{
+  public:
+    PrimaryGeneratorAction();    
+   ~PrimaryGeneratorAction();
+
+  public:
+    virtual void GeneratePrimaries(G4Event*);
+
+  public:
+   G4ParticleGun* GetParticleGun() const{ return fParticleGun; };
+    
+    void SelectAction(G4int i) { fSelectedAction = i; };    
+    G4int GetSelectedAction()  { return fSelectedAction; };    
+    PrimaryGeneratorAction1*  GetAction1() { return fAction1; };
+    PrimaryGeneratorAction2*  GetAction2() { return fAction2; };
+    PrimaryGeneratorAction3*  GetAction3() { return fAction3; };
+    PrimaryGeneratorAction4*  GetAction4() { return fAction4; };            
+    
+  private:
+    G4ParticleGun*           fParticleGun;
+    PrimaryGeneratorAction1* fAction1;
+    PrimaryGeneratorAction2* fAction2;
+    PrimaryGeneratorAction3* fAction3;
+    PrimaryGeneratorAction4* fAction4;
+    G4int                    fSelectedAction;
+        
+    PrimaryGeneratorMessenger* fGunMessenger;     
+};
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+#endif

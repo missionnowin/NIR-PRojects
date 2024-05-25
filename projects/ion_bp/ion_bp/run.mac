@@ -1,0 +1,74 @@
+# Verbose levels
+#*****************
+/control/verbose 0
+/run/verbose 0
+/vis/verbose 2
+/tracking/verbose 0
+#/stepping/verbose 3
+
+# Histograms
+#******************
+# XY-distribution of Au ions
+/analysis/h2/set 0 100 -5. 5. none none 100 -5. 5. none none
+/analysis/h2/setXaxis 0 X[cm]
+
+# Electron hit map in StsSt1
+/analysis/h2/set 1 100 -240. 240. none none 100 -200. 200. none none
+/analysis/h2/setXaxis 1 X[mm]
+
+# Electron hit map in StsSt2
+/analysis/h2/set 2 100 -240. 240. none none 100 -200. 200. none none
+/analysis/h2/setXaxis 2 X[mm]
+
+# Electron hit map in StsSt3
+/analysis/h2/set 3 100 -360. 360. none none 100 -200. 200. none none
+/analysis/h2/setXaxis 3 X[mm]
+
+# Electron hit map in StsSt4
+/analysis/h2/set 4 100 -360. 360. none none 100 -200. 200. none none
+/analysis/h2/setXaxis 4 X[mm]
+
+# Electron hit map in GemSt1
+/analysis/h2/set 11 100 -816. 816. none none 100 -450. 450. none none
+/analysis/h2/setXaxis 11 X[mm]
+
+# Electron hit map in GemSt2
+/analysis/h2/set 12 100 -816. 816. none none 100 -450. 450. none none
+/analysis/h2/setXaxis 12 X[mm]
+
+# Electron hit map in GemSt3
+/analysis/h2/set 13 100 -816. 816. none none 100 -450. 450. none none
+/analysis/h2/setXaxis 13 X[mm]
+
+# Electron hit map in GemSt4
+/analysis/h2/set 14 100 -816. 816. none none 100 -450. 450. none none
+/analysis/h2/setXaxis 14 X[mm]
+
+# Electron hit map in GemSt5
+/analysis/h2/set 15 100 -816. 816. none none 100 -450. 450. none none
+/analysis/h2/setXaxis 15 X[mm]
+
+# Electron hit map in GemSt6
+/analysis/h2/set 16 100 -816. 816. none none 100 -450. 450. none none
+/analysis/h2/setXaxis 16 X[mm]
+
+# Electron hit map in GemSt7
+/analysis/h2/set 17 100 -816. 816. none none 100 -450. 450. none none
+/analysis/h2/setXaxis 17 X[mm]
+
+# Gun particle settings
+#************************
+/gun/particle ion
+/gun/ion 79 197
+/gun/energy 985 GeV
+#/gun/particle proton
+#/gun/energy 2 GeV
+
+# Run settings
+#*****************
+/run/printProgress 1
+/run/beamOn 1000
+
+
+
+ 

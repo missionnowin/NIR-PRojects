@@ -1,0 +1,79 @@
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...... 
+
+#include "PrimaryGeneratorAction1.hh"
+#include "PrimaryGeneratorAction.hh"
+#include "HistoManager.hh"
+
+#include "G4Event.hh"
+#include "G4ParticleGun.hh"
+#include "G4ParticleTable.hh"
+#include "G4ParticleDefinition.hh"
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
+#include "Randomize.hh"
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+PrimaryGeneratorAction1::PrimaryGeneratorAction1(G4ParticleGun* gun)
+: fParticleGun(gun)
+{ }
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+PrimaryGeneratorAction1::~PrimaryGeneratorAction1()
+{ }
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void PrimaryGeneratorAction1::GeneratePrimaries(G4Event* anEvent)
+{
+  const G4double xmax = 1*cm;
+  const G4double ymax = 1*cm;   
+  G4double  u, v, x, y, f1, f2, r=0.1*cm;  
+ 
+ //vertex 1 uniform on plane
+ 
+//  G4double x = xmax*(2*G4UniformRand() - 1);  //x uniform in (-xmax, +xmax)
+//  G4double y = ymax*(2*G4UniformRand() - 1);  //y uniform in (-ymax, +ymax)
+ 
+  for (G4int it1 = 0; it1 < 10; ++it1){
+  u = r*(2*G4UniformRand() - 1);
+  v = r*(2*G4UniformRand() - 1);
+  f1 = u*u+v*v;
+  if (f1 >= r) continue; 
+  f2 = std::sqrt(-2.*std::log(f1)/f1);
+  x = u*f2;
+  y = v*f2;
+  G4cout << " x = " << x << " y = " << y << G4endl;       
+   break;
+   }     
+
+   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+   analysisManager->FillH2(0,x,y);   
+
+  fParticleGun->SetParticlePosition(G4ThreeVector(x*cm,y*cm,-1710*mm));
+//  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.04,0.04,0.96));    
+// fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
+
+ //particle direction uniform around z 
+
+  //cosAlpha uniform in [cos(alphaMin), cos(alphaMax)]
+  G4double CosAlphaMin = 0.9;
+  G4double CosAlphaMax = 1.0;
+//  G4double cosAlpha = fCosAlphaMin - G4UniformRand()*(fCosAlphaMin - fCosAlphaMax); 
+  G4double cosAlpha = std::cos(0.001); //Alpha = 1 mrad
+  G4double sinAlpha = std::sqrt(1. - cosAlpha*cosAlpha);
+  G4double psi      = twopi*G4UniformRand();  //psi uniform in (0,2*pi)  
+  G4ThreeVector dir(sinAlpha*std::cos(psi),sinAlpha*std::sin(psi),cosAlpha);
+  
+  fParticleGun->SetParticleMomentumDirection(dir);
+
+//  fParticleGun->SetParticleEnergy(985*GeV);
+  fParticleGun->GeneratePrimaryVertex(anEvent);
+
+   fParticleGun->GeneratePrimaryVertex(anEvent);    
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

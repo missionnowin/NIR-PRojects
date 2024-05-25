@@ -1,0 +1,164 @@
+
+#include "SteppingAction.hh"
+#include "EventAction.hh"
+#include "DetectorConstruction.hh"
+#include "HistoManager.hh"
+
+#include "G4Step.hh"
+#include "G4Event.hh"
+#include "G4RunManager.hh"
+#include "G4LogicalVolume.hh"
+
+#include <iostream>
+#include <G4AnalysisManager.hh>
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+SteppingAction::SteppingAction(EventAction* eventAction)
+: G4UserSteppingAction(),
+  fEventAction(eventAction),
+  fScoringVolume(0)
+{}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+SteppingAction::~SteppingAction()
+{}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void SteppingAction::UserSteppingAction(const G4Step* step)
+{
+  G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+  // Get position of the current step in PreStepPoint and PostStepPoint
+    G4ThreeVector Pos1 = step->GetPreStepPoint()->GetPosition();
+    double x1 = Pos1.x();
+    double y1 = Pos1.y();
+    double z1 = Pos1.z();
+   G4ThreeVector Pos2 = step->GetPostStepPoint()->GetPosition();
+    double x2 = Pos2.x();
+    double y2 = Pos2.y();
+    double z2 = Pos2.z();
+    int pdg = step->GetTrack()->GetDynamicParticle()->GetDefinition()->GetPDGEncoding();
+//    G4cout << "PDGcode: " << pdg << " x= " << x1 << " y= " << y1 << " z= " << z1 << G4endl;
+    if(pdg==11 && y1==y2)step->GetTrack()->SetTrackStatus(fStopAndKill);
+
+
+ // Get volumes of the current step in PreStepPoint and PostStepPoint
+  G4String volPre = step->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetName(); 
+  if(step ->GetPostStepPoint()->GetPhysicalVolume() != 0){ 
+  G4String  volPost = step->GetPostStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetName(); 
+ 
+//StsSt1-2
+  if ( volPre == "World" && volPost == "logStsSt12"  ) {
+
+    int pdg = step->GetTrack()->GetDynamicParticle()->GetDefinition()->GetPDGEncoding();
+    G4cout.precision(6);
+    G4ThreeVector Pos = step->GetTrack()->GetPosition();
+    double x_det = Pos.x();
+    double y_det = Pos.y();
+    double z_det = Pos.z();
+    G4String sts_station = step->GetPostStepPoint()->GetPhysicalVolume()->GetName();
+
+   if(pdg==11 && sts_station == "physStsSt1") {
+//     G4cout<< " Coordinates of electron in StsSt1: x= " << x_det << " y= " << y_det << " z= " << z_det << G4endl;
+     analysisManager->FillH2(1,x_det,y_det);
+     fEventAction->AddElectronSts1();
+     step->GetTrack()->SetTrackStatus(fStopAndKill);
+    }
+   if(pdg==11 && sts_station == "physStsSt2") {
+//     G4cout<< " Coordinates of electron in StsSt2: x= " << x_det << " y= " << y_det << " z= " << z_det << G4endl;
+     analysisManager->FillH2(2,x_det,y_det);
+     fEventAction->AddElectronSts2();
+     step->GetTrack()->SetTrackStatus(fStopAndKill);
+    }
+  }
+
+//StsSt3-4
+  if ( volPre == "World" && volPost == "logStsSt34"  ) {
+
+    int pdg = step->GetTrack()->GetDynamicParticle()->GetDefinition()->GetPDGEncoding();
+   G4cout.precision(6);
+    G4ThreeVector Pos = step->GetTrack()->GetPosition();
+    double x_det = Pos.x();
+    double y_det = Pos.y();
+    double z_det = Pos.z();
+    G4String sts_station = step->GetPostStepPoint()->GetPhysicalVolume()->GetName();
+
+   if(pdg==11 && sts_station == "physStsSt3") {
+//     G4cout<< " Coordinates of electron in StsSt3: x= " << x_det << " y= " << y_det << " z= " << z_det << G4endl;
+     analysisManager->FillH2(3,x_det,y_det);
+     fEventAction->AddElectronSts3();
+     step->GetTrack()->SetTrackStatus(fStopAndKill);
+    }
+   if(pdg==11 && sts_station == "physStsSt4") {
+//     G4cout<< " Coordinates of electron in StsSt4: x= " << x_det << " y= " << y_det << " z= " << z_det << G4endl;
+     analysisManager->FillH2(4,x_det,y_det);
+     fEventAction->AddElectronSts4();
+     step->GetTrack()->SetTrackStatus(fStopAndKill);
+    }
+  }
+
+  if ( volPre == "World" && volPost == "logGemSt"  ) {
+     int pdg = step->GetTrack()->GetDynamicParticle()->GetDefinition()->GetPDGEncoding();
+     G4cout.precision(6); 
+ 
+    G4ThreeVector Pos = step->GetTrack()->GetPosition();
+    double x_det = Pos.x();
+    double y_det = Pos.y();
+    double z_det = Pos.z();
+
+   G4String volume_sens = step->GetPostStepPoint()->GetPhysicalVolume()->GetName();
+   if(pdg==11 && volume_sens == "physGemSt1") {
+//    G4cout<< " Coordinates of electron in GemSt1: x= " << x_det << " y= " << y_det << " z= " << z_det << G4endl;
+     analysisManager->FillH2(11,x_det,y_det);
+     fEventAction->AddElectronGem1();
+     step->GetTrack()->SetTrackStatus(fStopAndKill);
+    }
+   if(pdg==11 && volume_sens == "physGemSt2") {
+//     G4cout<< " Coordinates of electron in GemSt2: x= " << x_det << " y= " << y_det << " z= " << z_det << G4endl;
+     analysisManager->FillH2(12,x_det,y_det);
+     fEventAction->AddElectronGem2();
+     step->GetTrack()->SetTrackStatus(fStopAndKill);
+    }
+   if(pdg==11 && volume_sens == "physGemSt3") {
+//     G4cout<< " Coordinates of electron in GemSt3: x= " << x_det << " y= " << y_det << " z= " << z_det << G4endl;
+     analysisManager->FillH2(13,x_det,y_det);
+     fEventAction->AddElectronGem3();
+     step->GetTrack()->SetTrackStatus(fStopAndKill);
+    }
+   if(pdg==11 && volume_sens == "physGemSt4") {
+//     G4cout<< " Coordinates of electron in GemSt4: x= " << x_det << " y= " << y_det << " z= " << z_det << G4endl;
+     analysisManager->FillH2(14,x_det,y_det);
+     fEventAction->AddElectronGem4();
+     step->GetTrack()->SetTrackStatus(fStopAndKill);
+    }
+   if(pdg==11 && volume_sens == "physGemSt5") {
+//     G4cout<< " Coordinates of electron in GemSt5: x= " << x_det << " y= " << y_det << " z= " << z_det << G4endl;
+     analysisManager->FillH2(15,x_det,y_det);
+     fEventAction->AddElectronGem5();
+     step->GetTrack()->SetTrackStatus(fStopAndKill);
+    }
+   if(pdg==11 && volume_sens == "physGemSt6") {
+//     G4cout<< " Coordinates of electron in GemSt6: x= " << x_det << " y= " << y_det << " z= " << z_det << G4endl;
+     analysisManager->FillH2(16,x_det,y_det);
+     fEventAction->AddElectronGem6();
+     step->GetTrack()->SetTrackStatus(fStopAndKill);
+    }
+   if(pdg==11 && volume_sens == "physGemSt7") {
+//     G4cout<< " Coordinates of electron in GemSt7: x= " << x_det << " y= " << y_det << " z= " << z_det << G4endl;
+     analysisManager->FillH2(17,x_det,y_det);
+     fEventAction->AddElectronGem7();
+     step->GetTrack()->SetTrackStatus(fStopAndKill);
+    }
+   }
+ }
+
+  // Collect energy deposited in this step
+  G4double edepStep = step->GetTotalEnergyDeposit();
+  fEventAction->AddEdep(edepStep); 
+
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+

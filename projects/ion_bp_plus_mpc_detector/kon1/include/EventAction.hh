@@ -23,41 +23,37 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file PhysicsList.hh
-/// \brief Definition of the PhysicsList class
+// $Id: B1EventAction.hh 75216 2013-10-29 16:08:11Z gcosmo $
 //
-// 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...... 
+/// \file B1EventAction.hh
+/// \brief Definition of the B1EventAction class
 
-#ifndef PhysicsList_h
-#define PhysicsList_h 1
+#ifndef B1EventAction_h
+#define B1EventAction_h 1
 
-#include "G4VUserPhysicsList.hh"
-#include "G4VModularPhysicsList.hh"
-#include "G4EmConfigurator.hh"
+#include "G4UserEventAction.hh"
+#include "globals.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+/// Event action class
+///
 
-class PhysicsList: public G4VUserPhysicsList
+class EventAction : public G4UserEventAction
 {
   public:
-    PhysicsList();
-    ~PhysicsList();
+    EventAction();
+    virtual ~EventAction();
+    
+    virtual void BeginOfEventAction(const G4Event* event);
+    virtual void EndOfEventAction(const G4Event* event);
 
-  protected:
-    // Construct particle and physics
-    void ConstructParticle() override;
-    void ConstructProcess()  override;
+    void AddEdep(G4double edep) { fEdep += edep; }
 
   private:
-      G4VPhysicsConstructor* emPhysicsList;
-      G4EmConfigurator emConfigurator;
+    G4double  fEdep;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
 
-
-
+    

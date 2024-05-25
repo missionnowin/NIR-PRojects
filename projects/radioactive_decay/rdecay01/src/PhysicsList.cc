@@ -43,6 +43,7 @@
 #include "G4DeexPrecoParameters.hh"
 #include "G4PhysListUtil.hh"
 #include "G4EmBuilder.hh"
+#include <G4EmLivermorePhysics.hh>
 #include "globals.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -78,6 +79,12 @@ PhysicsList::PhysicsList()
   // set default cut in range value
   //
   SetDefaultCutValue(1*mm);
+
+  emPhysicsList = new G4EmLivermorePhysics();
+}
+
+PhysicsList::~PhysicsList() {
+    delete emPhysicsList;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -94,6 +101,8 @@ void PhysicsList::ConstructParticle()
 void PhysicsList::ConstructProcess()
 {
   AddTransportation();
+  emPhysicsList->ConstructProcess();
+  emConfigurator.AddModels();
   
   G4Radioactivation* radioactiveDecay = new G4Radioactivation();
 

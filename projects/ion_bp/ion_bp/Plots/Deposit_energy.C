@@ -1,0 +1,34 @@
+
+#include <Riostream.h>
+#include <TString.h>
+#include <TCanvas.h>
+#include <TH2F.h>
+
+void Deposit_energy() {
+    // read a raw file and convert it to a plot
+    TString filepath = "spectrum.dat";
+    ifstream rawfile(filepath.Data());
+    if(!rawfile.good()) {
+        cout << "File not found!" << endl;
+        return;
+    }
+
+    TH1D *h = new TH1D("hplot", "Energy deposit distribution", 100, 0., 10.);
+    h->SetStats(1);
+    h->GetXaxis()->SetTitle("Energy deposit, MeV");
+    h->GetYaxis()->SetTitle("N");
+
+    double bin, count;
+
+    while(rawfile >> bin >> count && rawfile.good()) 
+    {cout << bin << " " << count << endl;
+        h->Fill(bin, count);
+     }
+  
+    TCanvas *c1 = new TCanvas("c1", "Canvas 1", 0, 0, 1024, 512);
+    c1->cd();
+    h->Draw();
+
+   cout << "Done!" << endl;
+   
+}

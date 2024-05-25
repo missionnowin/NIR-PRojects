@@ -1,0 +1,478 @@
+#include"DetectorConstruction.hh"
+#include"SensitiveDetector.hh" 
+#include<G4Box.hh>
+#include<G4Tubs.hh>
+#include<G4LogicalVolume.hh>
+#include<G4PVPlacement.hh>
+#include<G4SDManager.hh>
+#include "G4VisAttributes.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4RotationMatrix.hh"
+#include "G4NistManager.hh"
+#include <G4UserLimits.hh>
+#include <G4ProductionCuts.hh>
+#include <G4MaterialCutsCouple.hh>
+#include <G4SubtractionSolid.hh>
+
+using namespace std;
+
+#define Mat(x) (G4NistManager::Instance()->FindOrBuildMaterial(x))
+
+
+World::World(double size_x, double size_y, double size_z,  G4Material *mater_): mater(mater_), sizex(size_x), sizey(size_y), sizez(size_z)
+{
+	//double size05 = size/2;
+	solid = new G4Box("world", sizex/2, sizey/2, sizez/2);
+	logic = new G4LogicalVolume( solid, mater, "World", 0, 0, 0);
+	physic = new G4PVPlacement(0, G4ThreeVector(), logic, "World", 0 , false, 0);             
+}
+
+DetectorConstruction::DetectorConstruction()
+{
+}
+
+DetectorConstruction::~DetectorConstruction()
+{
+}
+
+
+G4VPhysicalVolume* DetectorConstruction::Construct()
+{
+
+    G4NistManager* nist = G4NistManager::Instance();
+
+    //Worls
+    world = new World(200 * cm, 200 * cm, 350 * cm, Mat("G4_Galactic"));
+    G4RotationMatrix* rotation = new G4RotationMatrix();
+    rotation->rotateX(-8*degree);
+
+  
+    //----------- Variables---------------------------------
+    G4double density, a, z, fractionmass;
+    G4double abundance, temperature, pressure;
+    G4String name, symbol;
+    G4int ncomponents, nnucleons, iz;
+    G4NistManager* man = G4NistManager::Instance();
+
+
+    //----------- Elements---------------------------------
+    G4Element* Si = nist->FindOrBuildElement("Si");
+    G4Element* Pb = nist->FindOrBuildElement("Pb");
+    G4Element* O = nist->FindOrBuildElement("O");
+    a = 1.008 * g / mole;
+    G4Element* elH = new G4Element(name = "Hydrogen", symbol = "H", z = 1., a);
+    a = 4.0 * g / mole;
+    G4Element* elHe = new G4Element(name = "Helium", symbol = "He", z = 2., a);
+    a = 12.01 * g / mole;
+    G4Element* elC = new G4Element(name = "Carbon", symbol = "C", z = 6., a);
+    a = 14.01 * g / mole;
+    G4Element* elN = new G4Element(name = "Nitrogen", symbol = "N", z = 7., a);
+    a = 16.00 * g / mole;
+    G4Element* elO = new G4Element(name = "Oxygen", symbol = "O", z = 8., a);
+    a = 20.18 * g / mole;
+    G4Element* elNe = new G4Element(name = "Neon", symbol = "Ne", z = 10., a);
+    a = 26.98 * g / mole;
+    G4Element* elAl = new G4Element(name = "Aluminium", symbol = "Al", z = 13., a);
+    a = 28.08 * g / mole;
+    G4Element* elSi = new G4Element(name = "Silicon", symbol = "Si", z = 14., a);
+    a = 39.95 * g / mole;
+    G4Element* elAr = new G4Element(name = "Argon", symbol = "Ar", z = 18., a);
+    a = 55.85 * g / mole;
+    G4Element* elFe = new G4Element(name = "Iron", symbol = "Fe", z = 26., a);
+    a = 63.54 * g / mole;
+
+    //-----------List of Materials and Mixtures--------------
+    G4double densitySi02PbO = 5.8*g/cm3;
+    G4Material* SiO2PbO = new G4Material("SiO2PbO", densitySi02PbO, 3);
+    SiO2PbO -> AddElement(Si,0.23);
+    SiO2PbO -> AddElement(Pb, 0.15);
+    SiO2PbO -> AddElement(O, 0.62);
+
+    density = 1.72E-05 * mg / cm3; //P=10-2 Torr
+    G4Material* mat15 = new G4Material(name = "Air", density, ncomponents = 2);
+    mat15->AddElement(elN, fractionmass = 70 * perCent);
+    mat15->AddElement(elO, fractionmass = 30 * perCent);
+
+
+    //HYDROGEN
+    density = 0.7080000E-01 * g / cm3;
+    a = 1.01 * g / mole;
+    G4Material* mat1 = new G4Material("Hydrogen", z = 1., a, density);
+
+    //DEUTERIUM
+    density = 0.162 * g / cm3;
+    a = 2.01 * g / mole;
+    G4Material* mat2 = new G4Material("Deuterium", z = 1., a, density);
+
+    //HELIUM
+    density = 0.125 * g / cm3;
+    a = 4.0 * g / mole;
+    G4Material* mat3 = new G4Material("Helium", z = 2., a, density);
+
+    //LITHIUM
+    G4Material* mat4 = man->FindOrBuildMaterial("G4_Li");
+
+    //BERILLIUM
+    G4Material* mat5 = man->FindOrBuildMaterial("G4_Be");
+
+    //CARBON
+    density = 2.265 * g / cm3;
+    a = 12.01 * g / mole;
+    G4Material* mat6 = new G4Material("Carbon", z = 6., a, density);
+
+    //NITROGEN
+    density = 0.808 * g / cm3;
+    a = 14.01 * g / mole;
+    G4Material* mat7 = new G4Material("Nitrogen_1", z = 7., a, density);
+
+    //NEON
+    density = 1.207 * g / cm3;
+    a = 20.18 * g / mole;
+    G4Material* mat8 = new G4Material("Neon", z = 10., a, density);
+
+    //ALUMINIUM
+    G4Material* mat9 = man->FindOrBuildMaterial("G4_Al");
+
+    //IRON
+    G4Material* mat10 = man->FindOrBuildMaterial("G4_Fe");
+
+    //COPPER
+    G4Material* mat11 = man->FindOrBuildMaterial("G4_Cu");
+
+    //TUNGSTEN
+    G4Material* mat12 = man->FindOrBuildMaterial("G4_W");
+
+    //LEAD
+    G4Material* mat13 = man->FindOrBuildMaterial("G4_Pb");
+
+    //URANIUM
+    G4Material* mat14 = man->FindOrBuildMaterial("G4_U");
+
+    //VACUUM
+    G4Material* mat16 = man->FindOrBuildMaterial("G4_Galactic");
+
+    //JUNK
+    G4Material* mat17 = man->FindOrBuildMaterial("G4_Si");
+    G4Material* mat18 = man->FindOrBuildMaterial("G4_Si");
+    G4Material* mat19 = man->FindOrBuildMaterial("G4_Si");
+
+    //SILICON
+    G4Material* mat20 = man->FindOrBuildMaterial("G4_Si");
+
+    //ARGON
+    density = 0.1780000E-02 * g / cm3;
+    a = 39.95 * g / mole;
+    G4Material* mat21 = new G4Material("Argon", z = 18., a, density);
+
+    G4Element* elCu = new G4Element(name = "Copper", symbol = "Cu", z = 29., a);
+
+    //MYLAR
+    density = 1.390 * g / cm3;
+    G4Material* mat22 = new G4Material(name = "Mylar", density, ncomponents = 3);
+    mat22->AddElement(elH, fractionmass = 3.59 * perCent);
+    mat22->AddElement(elC, fractionmass = 53.58 * perCent);
+    mat22->AddElement(elO, fractionmass = 42.83 * perCent);
+
+    //OXYGEN
+    density = 0.1430000E-02 * g / cm3;
+    a = 16.0 * g / mole;
+    G4Material* mat23 = new G4Material("Oxigen", z = 8., a, density);
+
+    //HELIUM_GAS
+    density = 0.1780000E-03 * g / cm3;
+    a = 4.0 * g / mole;
+    G4Material* mat24 = new G4Material("Helium_gas", z = 2., a, density);
+
+    //PLASTIC
+    density = 1.032 * g / cm3;
+    G4Material* mat25 = new G4Material(name = "Plastic", density, ncomponents = 2);
+    mat25->AddElement(elH, fractionmass = 7.74 * perCent);
+    mat25->AddElement(elC, fractionmass = 92.26 * perCent);
+
+    //NEON-METHANE
+    density = 0.840000E-03 * g / cm3;
+    G4Material* mat26 = new G4Material(name = "Ne-Methane", density, ncomponents = 3);
+    mat26->AddElement(elH, fractionmass = 4.5 * perCent);
+    mat26->AddElement(elC, fractionmass = 4.5 * perCent);
+    mat26->AddElement(elNe, fractionmass = 91.0 * perCent);
+
+    //ALT-MYLAR
+    density = 1.390 * g / cm3;
+    G4Material* mat27 = new G4Material(name = "Alt-Mylar", density, ncomponents = 3);
+    mat27->AddElement(elH, fractionmass = 4.2 * perCent);
+    mat27->AddElement(elC, fractionmass = 62.5 * perCent);
+    mat27->AddElement(elO, fractionmass = 33.3 * perCent);
+
+    //CERAMIC-AL-OXIDE
+    density = 2.80 * g / cm3;
+    G4Material* mat28 = new G4Material(name = "Ceramic_Al_oxide", density, ncomponents = 2);
+    mat28->AddElement(elO, fractionmass = 47.1 * perCent);
+    mat28->AddElement(elAl, fractionmass = 52.9 * perCent);
+
+    //G10
+    density = 1.70 * g / cm3;
+    G4Material* mat29 = new G4Material(name = "G10", density, ncomponents = 4);
+    mat29->AddElement(elH, fractionmass = 0.08 * perCent);
+    mat29->AddElement(elC, fractionmass = 8.84 * perCent);
+    mat29->AddElement(elO, fractionmass = 49.73 * perCent);
+    mat29->AddElement(elSi, fractionmass = 41.35 * perCent);
+
+    //Ar-CH4-CO2
+    density = 0.178200E-02 * g / cm3;
+    G4Material* mat30 = new G4Material(name = "Ar-CH4-CO2", density, ncomponents = 4);
+    mat30->AddElement(elH, fractionmass = 0.52 * perCent);
+    mat30->AddElement(elC, fractionmass = 3.08 * perCent);
+    mat30->AddElement(elO, fractionmass = 4.11 * perCent);
+    mat30->AddElement(elAr, fractionmass = 92.29 * perCent);
+
+    //NE-CH4-CO2
+    density = 0.8400E-03 * g / cm3;
+    G4Material* mat31 = new G4Material(name = "Ar-CH4-CO2", density, ncomponents = 4);
+    mat31->AddElement(elH, fractionmass = 0.95 * perCent);
+    mat31->AddElement(elC, fractionmass = 5.68 * perCent);
+    mat31->AddElement(elO, fractionmass = 7.56 * perCent);
+    mat31->AddElement(elNe, fractionmass = 85.81 * perCent);
+
+    //STEEL
+    density = 7.87 * g / cm3;
+    G4Material* mat32 = new G4Material(name = "Steel", density, ncomponents = 2);
+    mat32->AddElement(elC, fractionmass = 98.0 * perCent);
+    mat32->AddElement(elFe, fractionmass = 2.0 * perCent);
+
+    //CU-HE(LIQ)
+    density = 8.96 * g / cm3;
+    G4Material* mat33 = new G4Material(name = "Cu-He(liq)", density, ncomponents = 2);
+    mat33->AddElement(elHe, fractionmass = 50.0 * perCent);
+    mat33->AddElement(elCu, fractionmass = 50.0 * perCent);
+
+    //ROHACELL
+    density = 0.050 * g / cm3;
+    G4Material* mat34 = new G4Material(name = "Rohacell", density, ncomponents = 2);
+    mat34->AddElement(elH, fractionmass = 7.75 * perCent);
+    mat34->AddElement(elC, fractionmass = 92.25 * perCent);
+
+    //SULPHUR
+    density = 1.772 * g / cm3;
+    a = 32.066 * g / mole;
+    G4Material* mat35 = new G4Material("Sulphur", z = 16., a, density);
+
+    //QUARTZ
+    density = 2.32 * g / cm3;
+    G4Material* mat36 = new G4Material(name = "Quartz", density, ncomponents = 2);
+    mat36->AddElement(elO, fractionmass = 53.25 * perCent);
+    mat36->AddElement(elSi, fractionmass = 46.75 * perCent);
+
+    //NITROGEN
+    density = 0.1250000E-02 * g / cm3;
+    a = 14.007 * g / mole;
+    G4Material* mat37 = new G4Material("Nitrogen_2", z = 7., a, density);
+
+    //TYVEC
+    density = 0.050 * g / cm3;
+    G4Material* mat38 = new G4Material(name = "Tyvec", density, ncomponents = 2);
+    mat38->AddElement(elH, fractionmass = 14.37 * perCent);
+    mat38->AddElement(elC, fractionmass = 85.63 * perCent);
+
+    //GOLD
+    G4Material* mat39 = man->FindOrBuildMaterial("G4_Au");
+
+
+    //-------- Volumes: target and detectors ----------------------
+ 
+    //Box
+    G4Box *solidMCPDetector = new G4Box("solidMCPDetector", 5 * cm, 5 * cm, 10 * mm);
+    G4LogicalVolume *logiclMCPDetetctor = new G4LogicalVolume(solidMCPDetector, SiO2PbO, "logiclMCPDetector");
+    G4PVPlacement *physilMCPDetector = new G4PVPlacement(rotation, G4ThreeVector(0, 0, -1710 * mm), logiclMCPDetetctor, "physilMCPDetector", world->getLogic(), false, 0);
+    G4UserLimits* electronLimits = new G4UserLimits();
+    electronLimits->SetUserMinEkine(10. * CLHEP::keV); // Set minimum kinetic energy for electrons
+    logiclMCPDetetctor->SetUserLimits(electronLimits);
+
+    
+    //Detector
+    SensitiveDetector* detector = new SensitiveDetector("SD");
+    G4SDManager* SDman = G4SDManager::GetSDMpointer();
+    SDman->AddNewDetector(detector);
+
+    G4VisAttributes* purpur = new G4VisAttributes(G4Colour(0.6, 0.4, 0.8));
+    purpur -> SetVisibility(true);
+    int count = 0;
+
+    for (G4int i=-84; i<90; i=i+12)
+     {
+      for (G4int j=-84, k=-7*2; j<90; j=j+12, k=k+2)
+       {
+        string nameLogic = "logiclCyl";
+        string namePhysics = "physicsCyl";
+        string nameSolid = "solidCyl";
+        nameLogic.append(to_string(count));
+        namePhysics.append(to_string(count));
+        nameSolid.append(to_string(count));
+        G4Tubs *solidCyl = new G4Tubs(nameSolid, 0, 5*um, 100*um, 0, 2*3.1416);
+        G4LogicalVolume *logiclCyl = new G4LogicalVolume(solidCyl, Mat("G4_AIR"), nameLogic);
+        G4PVPlacement *physilCyl = new G4PVPlacement(rotation, G4ThreeVector(i*um,j*um,-1710 * mm + k*um), logiclCyl, namePhysics, world->getLogic(), false, 0);
+        logiclCyl -> SetVisAttributes(purpur);
+        count++;
+      }
+    }
+
+    /*
+    //Target
+    G4Box* solidTgt = new G4Box("solidTgt", 5 * cm, 5 * cm, 10 * mm);
+    G4LogicalVolume* logTgt = new G4LogicalVolume(solidTgt, Mat("G4_Galactic"), "logTgt"); //Vacuum
+    //  G4LogicalVolume *logTgt = new G4LogicalVolume(solidTgt, Mat("G4_Au"), "logTgt"); //Gold
+    G4PVPlacement* physTgt = new G4PVPlacement(0, G4ThreeVector(0, 0, -1710 * mm),
+        logTgt, "physTgt", world->getLogic(), false, 0);
+        */
+
+    //Magnet poles
+    G4Box* solidPole = new G4Box("solidPole", 0.5 * 136 * cm, 10 * cm, 0.5 * 249 * cm);
+    G4LogicalVolume* logPole = new G4LogicalVolume(solidPole, Mat("G4_Galactic"), "logPole");
+    G4PVPlacement* physPoleTop = new G4PVPlacement(0, G4ThreeVector(0, 60 * cm, (1245 - 1700) * mm),
+        logPole, "physPoleTop", world->getLogic(), false, 0);
+    G4PVPlacement* physPoleBottom = new G4PVPlacement(0, G4ThreeVector(0, -60 * cm, (1245 - 1700) * mm),
+        logPole, "physPoleBottom", world->getLogic(), false, 0);
+
+    //Beam pipe 1
+    G4double innerRadius1 = 0. * mm;
+    G4double outerRadius1 = 29 * mm;
+    G4double length1 = 1000. * mm;
+    G4double startAngle1 = 0. * deg;
+    G4double spanningAngle1 = 360. * deg;
+
+    G4Tubs* solidBp1 = new G4Tubs("solidBp1", innerRadius1, outerRadius1, 0.5 * length1,
+        startAngle1, spanningAngle1);
+    //  G4LogicalVolume *logBp1 = new G4LogicalVolume(solidBp1, mat24, "logBp1"); //Helium  P=1 Atm
+    G4LogicalVolume* logBp1 = new G4LogicalVolume(solidBp1, mat15, "logBp1"); //Air P=10-2 Atm
+    //  G4LogicalVolume *logBp1 = new G4LogicalVolume(solidBp1,Mat("G4_Galactic"), "logBp1"); 
+    G4PVPlacement* physBp1 = new G4PVPlacement(0, G4ThreeVector(0, 0, -955 * mm),
+        logBp1, "physBp1", world->getLogic(), false, 0);
+
+
+    //Beam pipe1 wall
+    G4double innerRadius11 = 29 * mm;
+    //  G4double outerRadius11 = 29.03*mm; // 30 mcm 
+    G4double outerRadius11 = 30.2 * mm;  // 1.2 mm
+    G4double length11 = 1000. * mm;
+    G4double startAngle11 = 0. * deg;
+    G4double spanningAngle11 = 360. * deg;
+
+    G4Tubs* solidBp1Wall = new G4Tubs("solidBp1Wall", innerRadius11, outerRadius11, 0.5 * length11,
+        startAngle11, spanningAngle11);
+    //  G4LogicalVolume *logBp1Wall = new G4LogicalVolume(solidBp1Wall, mat22, "logBp1Wall"); //Maylar
+    G4LogicalVolume* logBp1Wall = new G4LogicalVolume(solidBp1Wall, mat6, "logBp1Wall"); //Carbon
+    //  G4LogicalVolume *logBp1Wall = new G4LogicalVolume(solidBp1Wall, Mat("G4_Galactic"), "logBp1Wall");
+    //  G4PVPlacement *physBp1Wall = new G4PVPlacement(0, G4ThreeVector(0,0,-955*mm), 
+    //                               logBp1Wall, "physBp1Wall", world->getLogic(), false, 0);
+
+    //Beam pipe 2
+    G4double innerRadius2 = 0. * mm;
+    G4double outerRadius2 = 38 * mm;
+    G4double length2 = 2400. * mm;
+    G4double startAngle2 = 0. * deg;
+    G4double spanningAngle2 = 360. * deg;
+
+    // Rotation
+    G4double phi = -1. * deg;
+    G4RotationMatrix rm;
+    rm.rotateY(phi);
+
+    G4Tubs* solidBp2 = new G4Tubs("solidBp2", innerRadius2, outerRadius2, 0.5 * length2,
+        startAngle2, spanningAngle2);
+    //  G4LogicalVolume *logBp2 = new G4LogicalVolume(solidBp2, mat24, "logBp2"); //Helium P=1 Atm
+    G4LogicalVolume* logBp2 = new G4LogicalVolume(solidBp2, mat15, "logBp2"); //Air P=10-2 Atm
+    //  G4LogicalVolume *logBp2 = new G4LogicalVolume(solidBp2, Mat("G4_Galactic"), "logBp2"); 
+    G4PVPlacement* physBp2 = new G4PVPlacement(G4Transform3D(rm, G4ThreeVector(-21., 0, 745 * mm)),
+        logBp2, "physBp2", world->getLogic(), false, 0);
+
+    //Beam pipe 2 wall
+    G4double innerRadius21 = 38 * mm;
+    //  G4double outerRadius21 = 38.03*mm;  //30 mkm
+    G4double outerRadius21 = 39.2 * mm;   //1.2 mm
+    G4double length21 = 2400. * mm;
+    G4double startAngle21 = 0. * deg;
+    G4double spanningAngle21 = 360. * deg;
+
+    G4Tubs* solidBp2Wall = new G4Tubs("solidBp2Wall", innerRadius21, outerRadius21, 0.5 * length21,
+        startAngle21, spanningAngle21);
+    //  G4LogicalVolume *logBp2Wall = new G4LogicalVolume(solidBp2Wall, mat22, "logBp2Wall"); // Maylar
+    G4LogicalVolume* logBp2Wall = new G4LogicalVolume(solidBp2Wall, mat6, "logBp2Wall"); //Carbon
+
+    // STS stations #1-2
+    G4VSolid* StsBox12 = new G4Box("StsBox12", 240 * mm, 200 * mm, 5 * mm);
+    G4VSolid* StsHole12 = new G4Tubs("StsHole12", 0., 30 * mm, 12 * mm, 0., 360.);
+    G4VSolid* StsSt12 = new G4SubtractionSolid("StsSt12", StsBox12, StsHole12);
+    G4LogicalVolume* logStsSt12 = new G4LogicalVolume(StsSt12, Mat("G4_Galactic"), "logStsSt12");
+    // G4LogicalVolume *logStsSt12 = new G4LogicalVolume(StsBox12, Mat("G4_Galactic"), "logStsSt12");
+    G4PVPlacement* physStsSt1 = new G4PVPlacement(0, G4ThreeVector(-0.795 * mm, 0, -1255 * mm),
+        logStsSt12, "physStsSt1", world->getLogic(), false, 0);
+    G4PVPlacement* physStsSt2 = new G4PVPlacement(0, G4ThreeVector(-1.68 * mm, 0, -1055 * mm),
+        logStsSt12, "physStsSt2", world->getLogic(), false, 0);
+
+    // STS stations #3-4
+    G4VSolid* StsBox34 = new G4Box("StsBox34", 360 * mm, 200 * mm, 5 * mm);
+    G4VSolid* StsHole34 = new G4Tubs("StsHole34", 0., 30 * mm, 12 * mm, 0., 360.);
+    G4VSolid* StsSt34 = new G4SubtractionSolid("StsSt34", StsBox34, StsHole34);
+    G4LogicalVolume* logStsSt34 = new G4LogicalVolume(StsSt34, Mat("G4_Galactic"), "logStsSt34");
+    G4PVPlacement* physStsSt3 = new G4PVPlacement(0, G4ThreeVector(-2.90 * mm, 0, -855 * mm),
+        logStsSt34, "physStsSt3", world->getLogic(), false, 0);
+    G4PVPlacement* physStsSt4 = new G4PVPlacement(0, G4ThreeVector(-4.44 * mm, 0, -655 * mm),
+        logStsSt34, "physStsSt4", world->getLogic(), false, 0);
+
+    // GEM stations #1-7
+
+    G4VSolid* GemBox = new G4Box("GemBox", 816 * mm, 450 * mm, 12 * mm);
+    G4VSolid* GemHole = new G4Tubs("GemHole", 0., 40 * mm, 12 * mm, 0., 360.);
+    G4VSolid* GemSt = new G4SubtractionSolid("GemSt", GemBox, GemHole);
+    G4LogicalVolume* logGemSt = new G4LogicalVolume(GemSt, Mat("G4_Galactic"), "logGemSt");
+    G4PVPlacement* physGemSt1 = new G4PVPlacement(0, G4ThreeVector(-8.55 * mm, 0, -245 * mm),
+        logGemSt, "physGemSt1", world->getLogic(), false, 0);
+    G4PVPlacement* physGemSt2 = new G4PVPlacement(0, G4ThreeVector(-12.50 * mm, 0, 55 * mm),
+        logGemSt, "physGemSt2", world->getLogic(), false, 0);
+    G4PVPlacement* physGemSt3 = new G4PVPlacement(0, G4ThreeVector(-17.1 * mm, 0, 355 * mm),
+        logGemSt, "physGemSt3", world->getLogic(), false, 0);
+    G4PVPlacement* physGemSt4 = new G4PVPlacement(0, G4ThreeVector(-22.5 * mm, 0, 655 * mm),
+        logGemSt, "physGemSt4", world->getLogic(), false, 0);
+    G4PVPlacement* physGemSt5 = new G4PVPlacement(0, G4ThreeVector(-28.6 * mm, 0, 955 * mm),
+        logGemSt, "physGemSt5", world->getLogic(), false, 0);
+    G4PVPlacement* physGemSt6 = new G4PVPlacement(0, G4ThreeVector(-34.7 * mm, 0, 1255 * mm),
+        logGemSt, "physGemSt6", world->getLogic(), false, 0);
+    G4PVPlacement* physGemSt7 = new G4PVPlacement(0, G4ThreeVector(-40.8 * mm, 0, 1555 * mm),
+        logGemSt, "physGemSt7", world->getLogic(), false, 0);
+
+
+    //----------Visualization settings -------------------
+
+    world->getLogic()->SetVisAttributes(G4VisAttributes::GetInvisible());
+
+    G4VisAttributes* Bp1WallVisAtt = new G4VisAttributes();
+    Bp1WallVisAtt->SetVisibility(true);
+    Bp1WallVisAtt->SetForceWireframe(true);
+    Bp1WallVisAtt->SetColour(1.0, 1.0, 0.0); //Red (R,G,B)
+    //  logBp1Wall-> SetVisAttributes(Bp1WallVisAtt);
+
+    G4VisAttributes* Bp2WallVisAtt = new G4VisAttributes();
+    Bp2WallVisAtt->SetVisibility(true);
+    Bp2WallVisAtt->SetForceWireframe(true);
+    Bp2WallVisAtt->SetColour(0.0, 1.0, 0.0); //Green 
+    //  logBp2Wall-> SetVisAttributes(Bp2WallVisAtt);
+
+    logStsSt12->SetVisAttributes(Bp1WallVisAtt);
+    logStsSt34->SetVisAttributes(Bp1WallVisAtt);
+    logGemSt->SetVisAttributes(Bp2WallVisAtt);
+
+    G4VisAttributes* MagVisAtt = new G4VisAttributes();
+    MagVisAtt->SetVisibility(true);
+    MagVisAtt->SetForceWireframe(true);
+    MagVisAtt->SetColour(1.0, 1.0, 0.0); //Yellow 
+    logPole->SetVisAttributes(MagVisAtt);
+    logBp1->SetVisAttributes(MagVisAtt);
+    logBp2->SetVisAttributes(MagVisAtt);
+
+    G4VisAttributes* orange = new G4VisAttributes(G4Colour(1.0, 0.5, 0.0));
+    orange->SetForceWireframe(true);
+    orange->SetVisibility(true);
+    logiclMCPDetetctor->SetVisAttributes(orange);
+
+    SetSensitiveDetector(logiclMCPDetetctor, detector);
+    return world->getPhysic();
+}

@@ -1,0 +1,1128 @@
+#include"DetectorConstruction.hh"
+#include"SensitiveDetector.hh" 
+#include<G4NistManager.hh>
+#include<G4Material.hh>
+#include<G4Element.hh>
+#include<G4Isotope.hh>
+#include<G4Box.hh>
+#include<G4Tubs.hh>
+#include<G4LogicalVolume.hh>
+#include<G4PVPlacement.hh>
+#include<G4SDManager.hh>
+#include<G4VisAttributes.hh>
+#include "G4SystemOfUnits.hh"
+
+using namespace std;
+
+#define Mat(x) (G4NistManager::Instance()->FindOrBuildMaterial(x))
+
+
+World::World(double size_x, double size_y, double size_z,  G4Material *mater_): mater(mater_), sizex(size_x), sizey(size_y), sizez(size_z)
+{
+	//double size05 = size/2;
+	solid = new G4Box("world", sizex/2, sizey/2, sizez/2);
+	logic = new G4LogicalVolume( solid, mater, "World", 0, 0, 0);
+	physic = new G4PVPlacement(0, G4ThreeVector(), logic, "World",
+				   0, false, 0);             
+}
+
+DetectorConstruction::DetectorConstruction()
+{
+}
+
+DetectorConstruction::~DetectorConstruction()
+{
+}
+
+
+G4VPhysicalVolume* DetectorConstruction::Construct()
+{
+
+//----------- Materials and Mixtures--------------
+
+ G4double density, a, z, fractionmass;
+ G4double abundance, temperature, pressure;
+ G4String name, symbol;
+ G4int ncomponents, nnucleons, iz;
+ G4NistManager* man = G4NistManager::Instance();
+
+//----------- Elements---------------------------------
+
+ a = 1.008*g/mole;
+ G4Element* elH  = new G4Element(name="Hydrogen",symbol="H" , z= 1., a);
+ a = 4.0*g/mole;
+ G4Element* elHe  = new G4Element(name="Helium",symbol="He" , z= 2., a);
+ a = 12.01*g/mole;
+ G4Element* elC  = new G4Element(name="Carbon",symbol="C" , z= 6., a);
+ a = 14.01*g/mole;
+ G4Element* elN  = new G4Element(name="Nitrogen",symbol="N" , z= 7., a);
+ a = 16.00*g/mole;
+ G4Element* elO  = new G4Element(name="Oxygen",symbol="O" , z= 8., a);
+ a = 20.18*g/mole;
+ G4Element* elNe  = new G4Element(name="Neon",symbol="Ne" , z= 10., a);
+ a = 26.98*g/mole;
+ G4Element* elAl  = new G4Element(name="Aluminium",symbol="Al" , z= 13., a);
+ a = 28.08*g/mole;
+ G4Element* elSi  = new G4Element(name="Silicon",symbol="Si" , z= 14., a);
+ a = 39.95*g/mole;
+ G4Element* elAr  = new G4Element(name="Argon",symbol="Ar" , z= 18., a);
+ a = 55.85*g/mole;
+ G4Element* elFe  = new G4Element(name="Iron",symbol="Fe" , z= 26., a);
+ a = 63.54*g/mole;
+ G4Element* elCu  = new G4Element(name="Copper",symbol="Cu" , z= 29., a);
+
+//-----------List of Materials and Mixtures--------------
+
+ //HYDROGEN
+ density = 0.7080000E-01*g/cm3;
+ a= 1.01*g/mole;
+ G4Material* mat1 = new G4Material("Hydrogen",z=1.,a, density);
+
+ //DEUTERIUM
+ density = 0.162*g/cm3;
+ a= 2.01*g/mole;
+ G4Material* mat2 = new G4Material("Deuterium",z=1.,a, density);
+
+ //HELIUM
+ density = 0.125*g/cm3;
+ a= 4.0*g/mole;
+ G4Material* mat3 = new G4Material("Helium",z=2.,a, density);
+
+ //LITHIUM
+ G4Material* mat4  = man->FindOrBuildMaterial("G4_Li");
+
+ //BERILLIUM
+ G4Material* mat5  = man->FindOrBuildMaterial("G4_Be");
+
+ //CARBON
+ density = 2.265*g/cm3;
+ a= 12.01*g/mole;
+ G4Material* mat6 = new G4Material("Carbon",z=6.,a, density);
+
+ //NITROGEN
+ density = 0.808*g/cm3;
+ a= 14.01*g/mole;
+ G4Material* mat7 = new G4Material("Nitrogen_1",z=7.,a, density);
+
+ //NEON
+ density = 1.207*g/cm3;
+ a= 20.18*g/mole;
+ G4Material* mat8 = new G4Material("Neon",z=10.,a, density);
+
+ //ALUMINIUM
+ G4Material* mat9  = man->FindOrBuildMaterial("G4_Al");
+
+ //IRON
+ G4Material* mat10  = man->FindOrBuildMaterial("G4_Fe");
+
+ //COPPER
+ G4Material* mat11  = man->FindOrBuildMaterial("G4_Cu");
+
+ //TUNGSTEN
+ G4Material* mat12  = man->FindOrBuildMaterial("G4_W");
+
+ //LEAD
+ G4Material* mat13  = man->FindOrBuildMaterial("G4_Pb");
+
+ //URANIUM
+ G4Material* mat14  = man->FindOrBuildMaterial("G4_U");
+
+ //AIR
+ density = 1.290*mg/cm3;
+ G4Material* mat15 = new G4Material(name="Air",density,ncomponents=2);
+ mat15->AddElement(elN, fractionmass=70*perCent);
+ mat15->AddElement(elO, fractionmass=30*perCent);
+
+ //VACUUM
+ G4Material* mat16  = man->FindOrBuildMaterial("G4_Galactic");
+
+ //JUNK
+ G4Material* mat17  = man->FindOrBuildMaterial("G4_Si");
+ G4Material* mat18  = man->FindOrBuildMaterial("G4_Si");
+ G4Material* mat19  = man->FindOrBuildMaterial("G4_Si");
+
+ //SILICON
+ G4Material* mat20  = man->FindOrBuildMaterial("G4_Si");
+
+ //ARGON
+ density = 0.1780000E-02*g/cm3;
+ a= 39.95*g/mole;
+ G4Material* mat21 = new G4Material("Argon",z=18.,a, density);
+
+ //MYLAR
+ density = 1.390*g/cm3;
+ G4Material* mat22 = new G4Material(name="Mylar",density,ncomponents=3);
+ mat22->AddElement(elH, fractionmass=3.59*perCent);
+ mat22->AddElement(elC, fractionmass=53.58*perCent);
+ mat22->AddElement(elO, fractionmass=42.83*perCent);
+
+ //OXYGEN
+ density = 0.1430000E-02*g/cm3;
+ a= 16.0*g/mole;
+ G4Material* mat23 = new G4Material("Oxigen",z=8.,a, density);
+
+ //HELIUM_GAS
+ density = 0.1780000E-03*g/cm3;
+ a= 4.0*g/mole;
+ G4Material* mat24 = new G4Material("Helium_gas",z=2.,a, density);
+ 
+ //PLASTIC
+ density = 1.032*g/cm3;
+ G4Material* mat25 = new G4Material(name="Plastic",density,ncomponents=2);
+ mat25->AddElement(elH, fractionmass=7.74*perCent);
+ mat25->AddElement(elC, fractionmass=92.26*perCent);
+ 
+ //NEON-METHANE
+ density = 0.840000E-03*g/cm3;
+ G4Material* mat26 = new G4Material(name="Ne-Methane",density,ncomponents=3);
+ mat26->AddElement(elH, fractionmass=4.5*perCent);
+ mat26->AddElement(elC, fractionmass=4.5*perCent);
+ mat26->AddElement(elNe, fractionmass=91.0*perCent);
+
+ //ALT-MYLAR
+ density = 1.390*g/cm3;
+ G4Material* mat27 = new G4Material(name="Alt-Mylar",density,ncomponents=3);
+ mat27->AddElement(elH, fractionmass=4.2*perCent);
+ mat27->AddElement(elC, fractionmass=62.5*perCent);
+ mat27->AddElement(elO, fractionmass=33.3*perCent);
+
+ //CERAMIC-AL-OXIDE
+ density = 2.80*g/cm3;
+ G4Material* mat28 = new G4Material(name="Ceramic_Al_oxide",density,ncomponents=2);
+ mat28->AddElement(elO,  fractionmass=47.1*perCent);
+ mat28->AddElement(elAl, fractionmass=52.9*perCent);
+
+ //G10
+ density = 1.70*g/cm3;
+ G4Material* mat29 = new G4Material(name="G10",density,ncomponents=4);
+ mat29->AddElement(elH, fractionmass=0.08*perCent);
+ mat29->AddElement(elC, fractionmass=8.84*perCent);
+ mat29->AddElement(elO, fractionmass=49.73*perCent);
+ mat29->AddElement(elSi, fractionmass=41.35*perCent);
+
+ //Ar-CH4-CO2
+ density = 0.178200E-02*g/cm3;
+ G4Material* mat30 = new G4Material(name="Ar-CH4-CO2",density,ncomponents=4);
+ mat30->AddElement(elH, fractionmass=0.52*perCent);
+ mat30->AddElement(elC, fractionmass=3.08*perCent);
+ mat30->AddElement(elO, fractionmass=4.11*perCent);
+ mat30->AddElement(elAr, fractionmass=92.29*perCent);
+
+ //NE-CH4-CO2
+ density = 0.8400E-03*g/cm3;
+ G4Material* mat31 = new G4Material(name="Ar-CH4-CO2",density,ncomponents=4);
+ mat31->AddElement(elH, fractionmass=0.95*perCent);
+ mat31->AddElement(elC, fractionmass=5.68*perCent);
+ mat31->AddElement(elO, fractionmass=7.56*perCent);
+ mat31->AddElement(elNe, fractionmass=85.81*perCent);
+
+ //STEEL
+ density = 7.87*g/cm3;
+ G4Material* mat32 = new G4Material(name="Steel",density,ncomponents=2);
+ mat32->AddElement(elC, fractionmass=98.0*perCent);
+ mat32->AddElement(elFe, fractionmass=2.0*perCent);
+
+ //CU-HE(LIQ)
+ density = 8.96*g/cm3;
+ G4Material* mat33 = new G4Material(name="Cu-He(liq)",density,ncomponents=2);
+ mat33->AddElement(elHe, fractionmass=50.0*perCent);
+ mat33->AddElement(elCu, fractionmass=50.0*perCent);
+
+ //ROHACELL
+ density = 0.050*g/cm3;
+ G4Material* mat34 = new G4Material(name="Rohacell",density,ncomponents=2);
+ mat34->AddElement(elH, fractionmass=7.75*perCent);
+ mat34->AddElement(elC, fractionmass=92.25*perCent);
+
+ //SULPHUR
+ density = 1.772*g/cm3;
+ a= 32.066*g/mole;
+ G4Material* mat35 = new G4Material("Sulphur",z=16.,a, density);
+ 
+ //QUARTZ
+ density = 2.32*g/cm3;
+ G4Material* mat36 = new G4Material(name="Quartz",density,ncomponents=2);
+ mat36->AddElement(elO, fractionmass=53.25*perCent);
+ mat36->AddElement(elSi, fractionmass=46.75*perCent);
+
+ //NITROGEN
+ density = 0.1250000E-02*g/cm3;
+ a= 14.007*g/mole;
+ G4Material* mat37 = new G4Material("Nitrogen_2",z=7.,a, density);
+
+ //TYVEC
+ density = 0.050*g/cm3;
+ G4Material* mat38 = new G4Material(name="Tyvec",density,ncomponents=2);
+ mat38->AddElement(elH, fractionmass=14.37*perCent);
+ mat38->AddElement(elC, fractionmass=85.63*perCent);
+
+ //GOLD
+ G4Material* mat39  = man->FindOrBuildMaterial("G4_Au");
+
+
+//-----------PSD Volumes--------------
+
+  //CAVE  (0-level: CAVE)
+
+  world = new World(600*cm, 200*cm, 4000*cm, mat16);
+
+  //VETO  (1-level: CAVE->VETO)
+
+  G4Box *solidVETO = new G4Box("solidVETO", 60*cm, 60*cm, 69.48*cm);
+  G4LogicalVolume *logVETO = new G4LogicalVolume(solidVETO, mat15, "logVETO");
+//  G4PVPlacement *physVETO = new G4PVPlacement(0, G4ThreeVector(0,0,1189.07*cm), logVETO, "physVETO", world->getLogic(), false, 0);
+  G4PVPlacement *physVETO = new G4PVPlacement(0, G4ThreeVector(0,0,0*cm), logVETO, "physVETO", world->getLogic(), false, 0);
+
+//---------------Small modules ------------------
+
+  //VMOD  (2-level:CAVE->VETO->VMOD)
+ 
+  G4Box *solidVMOD = new G4Box("VMOD", 5.0*cm, 5.0*cm, 62.4*cm);
+  G4LogicalVolume *logVMOD = new G4LogicalVolume(solidVMOD, mat10, "logVMOD");
+  G4PVPlacement *physVMOD1 = new G4PVPlacement(0, G4ThreeVector(15*cm,15*cm,-7.08*cm), logVMOD, "physVMOD1", logVETO, false, 0);
+  G4PVPlacement *physVMOD2 = new G4PVPlacement(0, G4ThreeVector(5*cm,15*cm,-7.08*cm), logVMOD, "physVMOD2", logVETO, false, 0);
+  G4PVPlacement *physVMOD3 = new G4PVPlacement(0, G4ThreeVector(-5*cm,15*cm,-7.08*cm), logVMOD, "physVMOD3", logVETO, false, 0);
+   G4PVPlacement *physVMOD4 = new G4PVPlacement(0, G4ThreeVector(-15*cm,15*cm,-7.08*cm), logVMOD, "physVMOD4", logVETO, false, 0);
+  G4PVPlacement *physVMOD5 = new G4PVPlacement(0, G4ThreeVector(15*cm,5*cm,-7.08*cm), logVMOD, "physVMOD5", logVETO, false, 0);
+  G4PVPlacement *physVMOD6 = new G4PVPlacement(0, G4ThreeVector(5*cm,5*cm,-7.08*cm), logVMOD, "physVMOD6", logVETO, false, 0);
+  G4PVPlacement *physVMOD7 = new G4PVPlacement(0, G4ThreeVector(-5*cm,5*cm,-7.08*cm), logVMOD, "physVMOD7", logVETO, false, 0);
+   G4PVPlacement *physVMOD8 = new G4PVPlacement(0, G4ThreeVector(-15*cm,5*cm,-7.08*cm), logVMOD, "physVMOD8", logVETO, false, 0); 
+  G4PVPlacement *physVMOD9 = new G4PVPlacement(0, G4ThreeVector(15*cm,-5*cm,-7.08*cm), logVMOD, "physVMOD9", logVETO, false, 0);
+  G4PVPlacement *physVMOD10 = new G4PVPlacement(0, G4ThreeVector(5*cm,-5*cm,-7.08*cm), logVMOD, "physVMOD10", logVETO, false, 0);
+  G4PVPlacement *physVMOD11 = new G4PVPlacement(0, G4ThreeVector(-5*cm,-5*cm,-7.08*cm), logVMOD, "physVMOD11", logVETO, false, 0);
+   G4PVPlacement *physVMOD12 = new G4PVPlacement(0, G4ThreeVector(-15*cm,-5*cm,-7.08*cm), logVMOD, "physVMOD12", logVETO, false, 0);
+  G4PVPlacement *physVMOD13 = new G4PVPlacement(0, G4ThreeVector(15*cm,-15*cm,-7.08*cm), logVMOD, "physVMOD13", logVETO, false, 0);
+  G4PVPlacement *physVMOD14 = new G4PVPlacement(0, G4ThreeVector(5*cm,-15*cm,-7.08*cm), logVMOD, "physVMOD14", logVETO, false, 0);
+  G4PVPlacement *physVMOD15 = new G4PVPlacement(0, G4ThreeVector(-5*cm,-15*cm,-7.08*cm), logVMOD, "physVMOD15", logVETO, false, 0);
+   G4PVPlacement *physVMOD16 = new G4PVPlacement(0, G4ThreeVector(-15*cm,-15*cm,-7.08*cm), logVMOD, "physVMOD16", logVETO, false, 0);
+
+
+//  fScoringVolume = logVMOD;
+
+
+
+  //VTYV  (3-level: CAVE->VETO->VMOD->VTYV)
+
+  G4Box *solidVTYV = new G4Box("VTYV", 4.85*cm, 4.95*cm, 0.22*cm);
+  G4LogicalVolume *logVTYV = new G4LogicalVolume(solidVTYV, mat38, "logVTYV");
+  G4PVPlacement *physVTYV1 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-60.18*cm), logVTYV, "physVTYV1", logVMOD, false, 0);
+ G4PVPlacement *physVTYV2 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-58.14*cm), logVTYV, "physVTYV2", logVMOD, false, 0);
+ G4PVPlacement *physVTYV3 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-56.10*cm), logVTYV, "physVTYV3", logVMOD, false, 0);
+ G4PVPlacement *physVTYV4 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-54.06*cm), logVTYV, "physVTYV4", logVMOD, false, 0);
+ G4PVPlacement *physVTYV5 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-52.02*cm), logVTYV, "physVTYV5", logVMOD, false, 0);
+ G4PVPlacement *physVTYV6 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-49.98*cm), logVTYV, "physVTYV6", logVMOD, false, 0);
+ G4PVPlacement *physVTYV7 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-47.94*cm), logVTYV, "physVTYV7", logVMOD, false, 0);
+ G4PVPlacement *physVTYV8 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-45.90*cm), logVTYV, "physVTYV8", logVMOD, false, 0);
+ G4PVPlacement *physVTYV9 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-43.86*cm), logVTYV, "physVTYV9", logVMOD, false, 0);
+ G4PVPlacement *physVTYV10 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-41.82*cm), logVTYV, "physVTYV10", logVMOD, false, 0);
+ G4PVPlacement *physVTYV11 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-39.78*cm), logVTYV, "physVTYV11", logVMOD, false, 0);
+ G4PVPlacement *physVTYV12 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-37.74*cm), logVTYV, "physVTYV12", logVMOD, false, 0);
+ G4PVPlacement *physVTYV13 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-35.70*cm), logVTYV, "physVTYV13", logVMOD, false, 0);
+ G4PVPlacement *physVTYV14 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-33.66*cm), logVTYV, "physVTYV14", logVMOD, false, 0);
+ G4PVPlacement *physVTYV15 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-31.62*cm), logVTYV, "physVTYV15", logVMOD, false, 0);
+ G4PVPlacement *physVTYV16 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-29.58*cm), logVTYV, "physVTYV16", logVMOD, false, 0);
+ G4PVPlacement *physVTYV17 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-27.54*cm), logVTYV, "physVTYV17", logVMOD, false, 0);
+ G4PVPlacement *physVTYV18 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-25.50*cm), logVTYV, "physVTYV18", logVMOD, false, 0);
+ G4PVPlacement *physVTYV19 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-23.46*cm), logVTYV, "physVTYV19", logVMOD, false, 0);
+ G4PVPlacement *physVTYV20 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-21.42*cm), logVTYV, "physVTYV20", logVMOD, false, 0);
+ G4PVPlacement *physVTYV21 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-19.38*cm), logVTYV, "physVTYV21", logVMOD, false, 0);
+ G4PVPlacement *physVTYV22 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-17.34*cm), logVTYV, "physVTYV22", logVMOD, false, 0);
+ G4PVPlacement *physVTYV23 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-15.30*cm), logVTYV, "physVTYV23", logVMOD, false, 0);
+ G4PVPlacement *physVTYV24 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-13.26*cm), logVTYV, "physVTYV24", logVMOD, false, 0);
+ G4PVPlacement *physVTYV25 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-11.22*cm), logVTYV, "physVTYV25", logVMOD, false, 0);
+ G4PVPlacement *physVTYV26 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-9.18*cm), logVTYV, "physVTYV26", logVMOD, false, 0);
+ G4PVPlacement *physVTYV27 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-7.14*cm), logVTYV, "physVTYV27", logVMOD, false, 0);
+ G4PVPlacement *physVTYV28 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-5.10*cm), logVTYV, "physVTYV28", logVMOD, false, 0);
+ G4PVPlacement *physVTYV29 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-3.06*cm), logVTYV, "physVTYV29", logVMOD, false, 0);
+ G4PVPlacement *physVTYV30 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-1.02*cm), logVTYV, "physVTYV30", logVMOD, false, 0);
+  G4PVPlacement *physVTYV31 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,1.02*cm), logVTYV, "physVTYV31", logVMOD, false, 0);
+ G4PVPlacement *physVTYV32 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,3.06*cm), logVTYV, "physVTYV32", logVMOD, false, 0);
+ G4PVPlacement *physVTYV33 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,5.10*cm), logVTYV, "physVTYV33", logVMOD, false, 0);
+ G4PVPlacement *physVTYV34 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,7.14*cm), logVTYV, "physVTYV34", logVMOD, false, 0);
+ G4PVPlacement *physVTYV35 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,9.18*cm), logVTYV, "physVTYV35", logVMOD, false, 0);
+ G4PVPlacement *physVTYV36 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,11.22*cm), logVTYV, "physVTYV36", logVMOD, false, 0);
+ G4PVPlacement *physVTYV37 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,13.26*cm), logVTYV, "physVTYV37", logVMOD, false, 0);
+ G4PVPlacement *physVTYV38 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,15.30*cm), logVTYV, "physVTYV38", logVMOD, false, 0);
+ G4PVPlacement *physVTYV39 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,17.34*cm), logVTYV, "physVTYV39", logVMOD, false, 0);
+ G4PVPlacement *physVTYV40 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,19.38*cm), logVTYV, "physVTYV40", logVMOD, false, 0);
+ G4PVPlacement *physVTYV41 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,21.42*cm), logVTYV, "physVTYV41", logVMOD, false, 0);
+ G4PVPlacement *physVTYV42 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,23.46*cm), logVTYV, "physVTYV42", logVMOD, false, 0);
+ G4PVPlacement *physVTYV43 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,25.50*cm), logVTYV, "physVTYV43", logVMOD, false, 0);
+ G4PVPlacement *physVTYV44 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,27.54*cm), logVTYV, "physVTYV44", logVMOD, false, 0);
+ G4PVPlacement *physVTYV45 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,29.58*cm), logVTYV, "physVTYV45", logVMOD, false, 0);
+ G4PVPlacement *physVTYV46 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,31.62*cm), logVTYV, "physVTYV46", logVMOD, false, 0);
+ G4PVPlacement *physVTYV47 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,33.66*cm), logVTYV, "physVTYV47", logVMOD, false, 0);
+ G4PVPlacement *physVTYV48 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,35.70*cm), logVTYV, "physVTYV48", logVMOD, false, 0);
+ G4PVPlacement *physVTYV49 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,37.74*cm), logVTYV, "physVTYV49", logVMOD, false, 0);
+ G4PVPlacement *physVTYV50 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,39.78*cm), logVTYV, "physVTYV50", logVMOD, false, 0);
+ G4PVPlacement *physVTYV51 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,41.82*cm), logVTYV, "physVTYV51", logVMOD, false, 0);
+ G4PVPlacement *physVTYV52 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,43.86*cm), logVTYV, "physVTYV52", logVMOD, false, 0);
+ G4PVPlacement *physVTYV53 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,45.90*cm), logVTYV, "physVTYV53", logVMOD, false, 0);
+ G4PVPlacement *physVTYV54 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,47.94*cm), logVTYV, "physVTYV54", logVMOD, false, 0);
+ G4PVPlacement *physVTYV55 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,49.98*cm), logVTYV, "physVTYV55", logVMOD, false, 0);
+ G4PVPlacement *physVTYV56 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,52.02*cm), logVTYV, "physVTYV56", logVMOD, false, 0);
+ G4PVPlacement *physVTYV57 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,54.06*cm), logVTYV, "physVTYV57", logVMOD, false, 0);
+ G4PVPlacement *physVTYV58 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,56.10*cm), logVTYV, "physVTYV58", logVMOD, false, 0);
+ G4PVPlacement *physVTYV59 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,58.14*cm), logVTYV, "physVTYV59", logVMOD, false, 0);
+ G4PVPlacement *physVTYV60 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,60.18*cm), logVTYV, "physVTYV60", logVMOD, false, 0);
+
+  //VRTY  (4-level: CAVE->VETO->VMOD->VTYV->VRTY)
+
+ G4Box *solidVRTY = new G4Box("VRTY", 0.01*cm, 3.7*cm, 0.22*cm);
+  G4LogicalVolume *logVRTY = new G4LogicalVolume(solidVRTY, mat25, "logVRTY");
+ G4PVPlacement *physVRTY1 = new G4PVPlacement(0, G4ThreeVector(4.84*cm,0.75*cm,0.0*cm), logVRTY, "physVRTY1", logVTYV, false, 0);
+
+ //VRTA  (4-level: CAVE->VETO->VMOD->VTYV->VRTA)
+
+ G4Box *solidVRTA = new G4Box("VRTA", 0.14*cm, 3.7*cm, 0.01*cm);
+  G4LogicalVolume *logVRTA = new G4LogicalVolume(solidVRTA, mat25, "logVRTA");
+ G4PVPlacement *physVRTA1 = new G4PVPlacement(0, G4ThreeVector(4.69*cm,0.75*cm,-0.21*cm), logVRTA, "physVRTA1", logVTYV, false, 0);
+ G4PVPlacement *physVRTA2 = new G4PVPlacement(0, G4ThreeVector(4.69*cm,0.75*cm,0.21*cm), logVRTA, "physVRTA2", logVTYV, false, 0);
+
+
+ //VSC_  (4-level: CAVE->VETO->VMOD->VTYV->VSC_)
+
+ G4Box *solidVSC_ = new G4Box("VSC_", 4.83*cm, 4.93*cm, 0.2*cm);
+  G4LogicalVolume *logVSC_ = new G4LogicalVolume(solidVSC_, mat25, "logVSC_");
+ G4PVPlacement *physVSC_1 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,0*cm), logVSC_, "physVSC_1", logVTYV, false, 0);
+
+ //VRSC  (5-level: CAVE->VETO->VMOD->VTYV->VSC_->VRSC)
+
+ G4Box *solidVRSC = new G4Box("VRSC", 0.14*cm, 3.7*cm, 0.2*cm);
+  G4LogicalVolume *logVRSC = new G4LogicalVolume(solidVRSC, mat25, "logVRSC");
+ G4PVPlacement *physVRSC1 = new G4PVPlacement(0, G4ThreeVector(4.69*cm,0.75*cm,0*cm), logVRSC, "physVRSC1", logVSC_, false, 0);
+
+ //VFE_  (3-level: CAVE->VETO->VMOD->VFE_)
+
+  G4Box *solidVFE_ = new G4Box("VFE_", 4.85*cm, 4.95*cm, 1.0*cm);
+  G4LogicalVolume *logVFE_ = new G4LogicalVolume(solidVFE_, mat10, "logVFE_");
+ G4PVPlacement *physVFE_1 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-61.4*cm), logVFE_, "physVFE_1", logVMOD, false, 0);
+ G4PVPlacement *physVFE_2 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,61.4*cm), logVFE_, "physVFE_2", logVMOD, false, 0);
+
+ //VRFE  (4-level: CAVE->VETO->VMOD->VFE_->VRFE)
+
+  G4Box *solidVRFE = new G4Box("VRFE", 0.15*cm, 3.7*cm, 0.8*cm);
+  G4LogicalVolume *logVRFE = new G4LogicalVolume(solidVRFE, mat25, "logVRFE");
+ G4PVPlacement *physVRFE1 = new G4PVPlacement(0, G4ThreeVector(4.7*cm,0.75*cm,0*cm), logVRFE, "physVRFE1", logVFE_, false, 0);
+
+ //VPB_  (3-level: CAVE->VETO->VMOD->VPB_)
+
+  G4Box *solidVPB_ = new G4Box("VPB_", 4.85*cm, 4.95*cm, 0.8*cm);
+  G4LogicalVolume *logVPB_ = new G4LogicalVolume(solidVPB_, mat13, "logVPB_");
+ G4PVPlacement *physVPB_2 = new G4PVPlacement(0,
+G4ThreeVector(0*cm,0*cm,-59.16*cm), logVPB_, "physVPB_2", logVMOD, false, 0);
+ G4PVPlacement *physVPB_3 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-57.12*cm), logVPB_, "physVPB_3", logVMOD, false, 0);
+ G4PVPlacement *physVPB_4 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-55.08*cm), logVPB_, "physVPB_4", logVMOD, false, 0);
+ G4PVPlacement *physVPB_5 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-53.04*cm), logVPB_, "physVPB_5", logVMOD, false, 0);
+ G4PVPlacement *physVPB_6 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-51.00*cm), logVPB_, "physVPB_6", logVMOD, false, 0);
+ G4PVPlacement *physVPB_7 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-48.96*cm), logVPB_, "physVPB_7", logVMOD, false, 0);
+ G4PVPlacement *physVPB_8 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-46.92*cm), logVPB_, "physVPB_8", logVMOD, false, 0);
+ G4PVPlacement *physVPB_9 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-44.88*cm), logVPB_, "physVPB_9", logVMOD, false, 0);
+ G4PVPlacement *physVPB_10 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-42.84*cm), logVPB_, "physVPB_10", logVMOD, false, 0);
+ G4PVPlacement *physVPB_11 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-40.80*cm), logVPB_, "physVPB_11", logVMOD, false, 0);
+ G4PVPlacement *physVPB_12 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-38.76*cm), logVPB_, "physVPB_12", logVMOD, false, 0);
+ G4PVPlacement *physVPB_13 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-36.72*cm), logVPB_, "physVPB_13", logVMOD, false, 0);
+ G4PVPlacement *physVPB_14 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-34.68*cm), logVPB_, "physVPB_14", logVMOD, false, 0);
+ G4PVPlacement *physVPB_15 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-32.64*cm), logVPB_, "physVPB_15", logVMOD, false, 0);
+ G4PVPlacement *physVPB_16 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-30.60*cm), logVPB_, "physVPB_16", logVMOD, false, 0);
+ G4PVPlacement *physVPB_17 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-28.56*cm), logVPB_, "physVPB_17", logVMOD, false, 0);
+ G4PVPlacement *physVPB_18 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-26.52*cm), logVPB_, "physVPB_18", logVMOD, false, 0);
+ G4PVPlacement *physVPB_19 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-24.48*cm), logVPB_, "physVPB_19", logVMOD, false, 0);
+ G4PVPlacement *physVPB_20 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-22.44*cm), logVPB_, "physVPB_20", logVMOD, false, 0);
+ G4PVPlacement *physVPB_21 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-20.40*cm), logVPB_, "physVPB_21", logVMOD, false, 0);
+ G4PVPlacement *physVPB_22 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-18.36*cm), logVPB_, "physVPB_22", logVMOD, false, 0);
+ G4PVPlacement *physVPB_23 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-16.32*cm), logVPB_, "physVPB_23", logVMOD, false, 0);
+ G4PVPlacement *physVPB_24 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-14.28*cm), logVPB_, "physVPB_24", logVMOD, false, 0);
+ G4PVPlacement *physVPB_25 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-12.24*cm), logVPB_, "physVPB_25", logVMOD, false, 0);
+ G4PVPlacement *physVPB_26 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-10.20*cm), logVPB_, "physVPB_26", logVMOD, false, 0);
+ G4PVPlacement *physVPB_27 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-8.16*cm), logVPB_, "physVPB_27", logVMOD, false, 0);
+ G4PVPlacement *physVPB_28 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-6.12*cm), logVPB_, "physVPB_28", logVMOD, false, 0);
+ G4PVPlacement *physVPB_29 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-4.08*cm), logVPB_, "physVPB_29", logVMOD, false, 0);
+ G4PVPlacement *physVPB_30 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-2.04*cm), logVPB_, "physVPB_30", logVMOD, false, 0);
+  G4PVPlacement *physVPB_31 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,0*cm), logVPB_, "physVPB_31", logVMOD, false, 0);
+ G4PVPlacement *physVPB_32 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,2.04*cm), logVPB_, "physVPB_32", logVMOD, false, 0);
+ G4PVPlacement *physVPB_33 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,4.08*cm), logVPB_, "physVPB_33", logVMOD, false, 0);
+ G4PVPlacement *physVPB_34 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,6.12*cm), logVPB_, "physVPB_34", logVMOD, false, 0);
+ G4PVPlacement *physVPB_35 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,8.16*cm), logVPB_, "physVPB_35", logVMOD, false, 0);
+ G4PVPlacement *physVPB_36 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,10.20*cm), logVPB_, "physVPB_36", logVMOD, false, 0);
+ G4PVPlacement *physVPB_37 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,12.24*cm), logVPB_, "physVPB_37", logVMOD, false, 0);
+ G4PVPlacement *physVPB_38 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,14.28*cm), logVPB_, "physVPB_38", logVMOD, false, 0);
+ G4PVPlacement *physVPB_39 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,16.32*cm), logVPB_, "physVPB_39", logVMOD, false, 0);
+ G4PVPlacement *physVPB_40 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,18.36*cm), logVPB_, "physVPB_40", logVMOD, false, 0);
+ G4PVPlacement *physVPB_41 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,20.40*cm), logVPB_, "physVPB_41", logVMOD, false, 0);
+ G4PVPlacement *physVPB_42 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,22.44*cm), logVPB_, "physVPB_42", logVMOD, false, 0);
+ G4PVPlacement *physVPB_43 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,24.48*cm), logVPB_, "physVPB_43", logVMOD, false, 0);
+ G4PVPlacement *physVPB_44 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,26.52*cm), logVPB_, "physVPB_44", logVMOD, false, 0);
+ G4PVPlacement *physVPB_45 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,28.56*cm), logVPB_, "physVPB_45", logVMOD, false, 0);
+ G4PVPlacement *physVPB_46 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,30.60*cm), logVPB_, "physVPB_46", logVMOD, false, 0);
+ G4PVPlacement *physVPB_47 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,32.64*cm), logVPB_, "physVPB_47", logVMOD, false, 0);
+ G4PVPlacement *physVPB_48 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,34.68*cm), logVPB_, "physVPB_48", logVMOD, false, 0);
+ G4PVPlacement *physVPB_49 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,36.72*cm), logVPB_, "physVPB_49", logVMOD, false, 0);
+ G4PVPlacement *physVPB_50 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,38.76*cm), logVPB_, "physVPB_50", logVMOD, false, 0);
+ G4PVPlacement *physVPB_51 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,40.80*cm), logVPB_, "physVPB_51", logVMOD, false, 0);
+ G4PVPlacement *physVPB_52 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,42.84*cm), logVPB_, "physVPB_52", logVMOD, false, 0);
+ G4PVPlacement *physVPB_53 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,44.88*cm), logVPB_, "physVPB_53", logVMOD, false, 0);
+ G4PVPlacement *physVPB_54 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,46.92*cm), logVPB_, "physVPB_54", logVMOD, false, 0);
+ G4PVPlacement *physVPB_55 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,48.96*cm), logVPB_, "physVPB_55", logVMOD, false, 0);
+ G4PVPlacement *physVPB_56 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,51.00*cm), logVPB_, "physVPB_56", logVMOD, false, 0);
+ G4PVPlacement *physVPB_57 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,53.04*cm), logVPB_, "physVPB_57", logVMOD, false, 0);
+ G4PVPlacement *physVPB_58 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,55.08*cm), logVPB_, "physVPB_58", logVMOD, false, 0);
+ G4PVPlacement *physVPB_59 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,57.12*cm), logVPB_, "physVPB_59", logVMOD, false, 0);
+ G4PVPlacement *physVPB_60 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,59.16*cm), logVPB_, "physVPB_60", logVMOD, false, 0);
+
+ //VRPB  (4-level: CAVE->VETO->VMOD->VPB_->VRPB)
+
+  G4Box *solidVRPB = new G4Box("VPRB", 0.15*cm, 3.7*cm, 1.0*cm);
+  G4LogicalVolume *logVRPB = new G4LogicalVolume(solidVRPB, mat25, "logVRPB");
+ G4PVPlacement *physVRPB1 = new G4PVPlacement(0,
+G4ThreeVector(4.7*cm,0.75*cm,0*cm), logVRPB, "physVRPB1", logVPB_, false, 0);
+
+
+//-------------Large modules -------------------
+
+  //VMDL  (2-level: CAVE->VETO->VMDL)
+
+  G4Box *solidVMDL = new G4Box("VMDL", 10.0*cm, 10.0*cm, 62.4*cm);
+  G4LogicalVolume *logVMDL = new G4LogicalVolume(solidVMDL, mat10, "logVMDL");
+  G4PVPlacement *physVMDL22 = new G4PVPlacement(0, G4ThreeVector(30*cm,30*cm,-7.08*cm), logVMDL, "physVMDL22", logVETO, false, 0);
+  G4PVPlacement *physVMDL23 = new G4PVPlacement(0, G4ThreeVector(10*cm,30*cm,-7.08*cm), logVMDL, "physVMDL23", logVETO, false, 0);
+  G4PVPlacement *physVMDL24 = new G4PVPlacement(0, G4ThreeVector(-10*cm,30*cm,-7.08*cm), logVMDL, "physVMDL24", logVETO, false, 0);
+  G4PVPlacement *physVMDL25 = new G4PVPlacement(0, G4ThreeVector(-30*cm,30*cm,-7.08*cm), logVMDL, "physVMDL25", logVETO, false, 0);
+  G4PVPlacement *physVMDL28 = new G4PVPlacement(0, G4ThreeVector(30*cm,10*cm,-7.08*cm), logVMDL, "physVMDL28", logVETO, false, 0);
+  G4PVPlacement *physVMDL29 = new G4PVPlacement(0, G4ThreeVector(-30*cm,10*cm,-7.08*cm), logVMDL, "physVMDL29", logVETO, false, 0);
+  G4PVPlacement *physVMDL32 = new G4PVPlacement(0, G4ThreeVector(30*cm,-10*cm,-7.08*cm), logVMDL, "physVMDL32", logVETO, false, 0);
+  G4PVPlacement *physVMDL33 = new G4PVPlacement(0, G4ThreeVector(-30*cm,-10*cm,-7.08*cm), logVMDL, "physVMDL33", logVETO, false, 0);
+  G4PVPlacement *physVMDL36 = new G4PVPlacement(0, G4ThreeVector(30*cm,-30*cm,-7.08*cm), logVMDL, "physVMDL36", logVETO, false, 0);
+  G4PVPlacement *physVMDL37 = new G4PVPlacement(0, G4ThreeVector(10*cm,-30*cm,-7.08*cm), logVMDL, "physVMDL37", logVETO, false, 0);
+  G4PVPlacement *physVMDL38 = new G4PVPlacement(0, G4ThreeVector(-10*cm,-30*cm,-7.08*cm), logVMDL, "physVMDL38", logVETO, false, 0);
+  G4PVPlacement *physVMDL39 = new G4PVPlacement(0, G4ThreeVector(-30*cm,-30*cm,-7.08*cm), logVMDL, "physVMDL39", logVETO, false, 0);
+
+ //VFEL  (3-level: CAVE->VETO->VMDL->VFEL)
+
+G4Box *solidVFEL = new G4Box("VFEL", 9.9*cm, 9.85*cm, 0.8*cm);
+  G4LogicalVolume *logVFEL = new G4LogicalVolume(solidVFEL, mat10, "logVFEL");
+ G4PVPlacement *physVFEL1 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-61.4*cm), logVFEL, "physVFEL1", logVMDL, false, 0);
+ G4PVPlacement *physVFEL2 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,61.4*cm), logVFEL, "physVFEL2", logVMDL, false, 0);
+
+//VRFL  (4-level: CAVE->VETO->VMDL->VFEL->VRFL)
+
+  G4Box *solidVRFL = new G4Box("VRFL", 0.1*cm, 8.6*cm, 1.*cm);
+  G4LogicalVolume *logVRFL = new G4LogicalVolume(solidVRFL, mat25, "logVRFL");
+ G4PVPlacement *physVRFL1 = new G4PVPlacement(0, G4ThreeVector(9.8*cm,0.75*cm,0*cm), logVRFL, "physVRFL1", logVFEL, false, 0);
+
+ //VTYL  (3-level: CAVE->VETO->VMDL->VTYL)
+
+  G4Box *solidVTYL = new G4Box("VTYL", 9.9*cm, 9.85*cm, 0.22*cm);
+  G4LogicalVolume *logVTYL = new G4LogicalVolume(solidVTYL, mat38, "logVTYL");
+  G4PVPlacement *physVTYL1 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-60.18*cm), logVTYL, "physVTYL1", logVMDL, false, 0);
+ G4PVPlacement *physVTYL2 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-58.14*cm), logVTYL, "physVTYL2", logVMDL, false, 0);
+ G4PVPlacement *physVTYL3 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-56.10*cm), logVTYL, "physVTYL3", logVMDL, false, 0);
+ G4PVPlacement *physVTYL4 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-54.06*cm), logVTYL, "physVTYL4", logVMDL, false, 0);
+ G4PVPlacement *physVTYL5 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-52.02*cm), logVTYL, "physVTYL5", logVMDL, false, 0);
+ G4PVPlacement *physVTYL6 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-49.98*cm), logVTYL, "physVTYL6", logVMDL, false, 0);
+ G4PVPlacement *physVTYL7 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-47.94*cm), logVTYL, "physVTYL7", logVMDL, false, 0);
+ G4PVPlacement *physVTYL8 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-45.90*cm), logVTYL, "physVTYL8", logVMDL, false, 0);
+ G4PVPlacement *physVTYL9 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-43.86*cm), logVTYL, "physVTYL9", logVMDL, false, 0);
+ G4PVPlacement *physVTYL10 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-41.82*cm), logVTYL, "physVTYL10", logVMDL, false, 0);
+ G4PVPlacement *physVTYL11 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-39.78*cm), logVTYL, "physVTYL11", logVMDL, false, 0);
+ G4PVPlacement *physVTYL12 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-37.74*cm), logVTYL, "physVTYL12", logVMDL, false, 0);
+ G4PVPlacement *physVTYL13 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-35.70*cm), logVTYL, "physVTYL13", logVMDL, false, 0);
+ G4PVPlacement *physVTYL14 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-33.66*cm), logVTYL, "physVTYL14", logVMDL, false, 0);
+ G4PVPlacement *physVTYL15 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-31.62*cm), logVTYL, "physVTYL15", logVMDL, false, 0);
+ G4PVPlacement *physVTYL16 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-29.58*cm), logVTYL, "physVTYL16", logVMDL, false, 0);
+ G4PVPlacement *physVTYL17 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-27.54*cm), logVTYL, "physVTYL17", logVMDL, false, 0);
+ G4PVPlacement *physVTYL18 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-25.50*cm), logVTYL, "physVTYL18", logVMDL, false, 0);
+ G4PVPlacement *physVTYL19 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-23.46*cm), logVTYL, "physVTYL19", logVMDL, false, 0);
+ G4PVPlacement *physVTYL20 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-21.42*cm), logVTYL, "physVTYL20", logVMDL, false, 0);
+ G4PVPlacement *physVTYL21 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-19.38*cm), logVTYL, "physVTYL21", logVMDL, false, 0);
+ G4PVPlacement *physVTYL22 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-17.34*cm), logVTYL, "physVTYL22", logVMDL, false, 0);
+ G4PVPlacement *physVTYL23 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-15.30*cm), logVTYL, "physVTYL23", logVMDL, false, 0);
+ G4PVPlacement *physVTYL24 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-13.26*cm), logVTYL, "physVTYL24", logVMDL, false, 0);
+ G4PVPlacement *physVTYL25 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-11.22*cm), logVTYL, "physVTYL25", logVMDL, false, 0);
+ G4PVPlacement *physVTYL26 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-9.18*cm), logVTYL, "physVTYL26", logVMDL, false, 0);
+ G4PVPlacement *physVTYL27 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-7.14*cm), logVTYL, "physVTYL27", logVMDL, false, 0);
+ G4PVPlacement *physVTYL28 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-5.10*cm), logVTYL, "physVTYL28", logVMDL, false, 0);
+ G4PVPlacement *physVTYL29 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-3.06*cm), logVTYL, "physVTYL29", logVMDL, false, 0);
+ G4PVPlacement *physVTYL30 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-1.02*cm), logVTYL, "physVTYL30", logVMDL, false, 0);
+  G4PVPlacement *physVTYL31 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,1.02*cm), logVTYL, "physVTYL31", logVMDL, false, 0);
+ G4PVPlacement *physVTYL32 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,3.06*cm), logVTYL, "physVTYL32", logVMDL, false, 0);
+ G4PVPlacement *physVTYL33 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,5.10*cm), logVTYL, "physVTYL33", logVMDL, false, 0);
+ G4PVPlacement *physVTYL34 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,7.14*cm), logVTYL, "physVTYL34", logVMDL, false, 0);
+ G4PVPlacement *physVTYL35 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,9.18*cm), logVTYL, "physVTYL35", logVMDL, false, 0);
+ G4PVPlacement *physVTYL36 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,11.22*cm), logVTYL, "physVTYL36", logVMDL, false, 0);
+ G4PVPlacement *physVTYL37 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,13.26*cm), logVTYL, "physVTYL37", logVMDL, false, 0);
+ G4PVPlacement *physVTYL38 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,15.30*cm), logVTYL, "physVTYL38", logVMDL, false, 0);
+ G4PVPlacement *physVTYL39 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,17.34*cm), logVTYL, "physVTYL39", logVMDL, false, 0);
+ G4PVPlacement *physVTYL40 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,19.38*cm), logVTYL, "physVTYL40", logVMDL, false, 0);
+ G4PVPlacement *physVTYL41 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,21.42*cm), logVTYL, "physVTYL41", logVMDL, false, 0);
+ G4PVPlacement *physVTYL42 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,23.46*cm), logVTYL, "physVTYL42", logVMDL, false, 0);
+ G4PVPlacement *physVTYL43 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,25.50*cm), logVTYL, "physVTYL43", logVMDL, false, 0);
+ G4PVPlacement *physVTYL44 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,27.54*cm), logVTYL, "physVTYL44", logVMDL, false, 0);
+ G4PVPlacement *physVTYL45 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,29.58*cm), logVTYL, "physVTYL45", logVMDL, false, 0);
+ G4PVPlacement *physVTYL46 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,31.62*cm), logVTYL, "physVTYL46", logVMDL, false, 0);
+ G4PVPlacement *physVTYL47 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,33.66*cm), logVTYL, "physVTYL47", logVMDL, false, 0);
+ G4PVPlacement *physVTYL48 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,35.70*cm), logVTYL, "physVTYL48", logVMDL, false, 0);
+ G4PVPlacement *physVTYL49 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,37.74*cm), logVTYL, "physVTYL49", logVMDL, false, 0);
+ G4PVPlacement *physVTYL50 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,39.78*cm), logVTYL, "physVTYL50", logVMDL, false, 0);
+ G4PVPlacement *physVTYL51 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,41.82*cm), logVTYL, "physVTYL51", logVMDL, false, 0);
+ G4PVPlacement *physVTYL52 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,43.86*cm), logVTYL, "physVTYL52", logVMDL, false, 0);
+ G4PVPlacement *physVTYL53 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,45.90*cm), logVTYL, "physVTYL53", logVMDL, false, 0);
+ G4PVPlacement *physVTYL54 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,47.94*cm), logVTYL, "physVTYL54", logVMDL, false, 0);
+ G4PVPlacement *physVTYL55 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,49.98*cm), logVTYL, "physVTYL55", logVMDL, false, 0);
+ G4PVPlacement *physVTYL56 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,52.02*cm), logVTYL, "physVTYL56", logVMDL, false, 0);
+ G4PVPlacement *physVTYL57 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,54.06*cm), logVTYL, "physVTYL57", logVMDL, false, 0);
+ G4PVPlacement *physVTYL58 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,56.10*cm), logVTYL, "physVTYL58", logVMDL, false, 0);
+ G4PVPlacement *physVTYL59 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,58.14*cm), logVTYL, "physVTYL59", logVMDL, false, 0);
+ G4PVPlacement *physVTYL60 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,60.18*cm), logVTYL, "physVTYL60", logVMDL, false, 0);
+
+ //VRYL  (4-level: CAVE->VETO->VMDL->VTYL->VRYL)
+
+ G4Box *solidVRYL = new G4Box("VRYL", 0.01*cm, 8.6*cm, 0.22*cm);
+  G4LogicalVolume *logVRYL = new G4LogicalVolume(solidVRYL, mat25, "logVRYL");
+ G4PVPlacement *physVRYL1 = new G4PVPlacement(0, G4ThreeVector(9.89*cm,0.75*cm,0.0*cm), logVRYL, "physVRYL1", logVTYL, false, 0);
+
+ //VRAL  (4-level: CAVE->VETO->VMDL->VTYL->VRAL)
+
+ G4Box *solidVRAL = new G4Box("VRAL", 0.09*cm, 8.6*cm, 0.01*cm);
+  G4LogicalVolume *logVRAL = new G4LogicalVolume(solidVRAL, mat25, "logVRAL");
+ G4PVPlacement *physVRAL1 = new G4PVPlacement(0, G4ThreeVector(9.79*cm,0.75*cm,-0.21*cm), logVRAL, "physVRAL1", logVTYL, false, 0);
+ G4PVPlacement *physVRAL2 = new G4PVPlacement(0, G4ThreeVector(9.79*cm,0.75*cm,0.21*cm), logVRAL, "physVRAL2", logVTYL, false, 0);
+
+ //VSCL  (4-level: CAVE->VETO->VMDL->VTYL->VSCL)
+
+ G4Box *solidVSCL = new G4Box("VSCL", 9.88*cm, 9.83*cm, 0.2*cm);
+  G4LogicalVolume *logVSCL = new G4LogicalVolume(solidVSCL, mat25, "logVSCL");
+ G4PVPlacement *physVSCL1 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,0*cm), logVSCL, "physVSCL1", logVTYL, false, 0);
+
+ //VRSL  (5-level: CAVE->VETO->VMDL->VTYL->VSCL->VRSL)
+
+ G4Box *solidVRSL = new G4Box("VRSL", 0.09*cm, 8.6*cm, 0.2*cm);
+  G4LogicalVolume *logVRSL = new G4LogicalVolume(solidVRSL, mat25, "logVRSL");
+ G4PVPlacement *physVRSL1 = new G4PVPlacement(0, G4ThreeVector(9.79*cm,0.75*cm,0*cm), logVRSL, "physVRSL1", logVSCL, false, 0);
+
+ //VPBL  (3-level: CAVE->VETO->VMDL->VPBL)
+
+  G4Box *solidVPBL = new G4Box("VPBL", 9.9*cm, 9.85*cm, 0.8*cm);
+  G4LogicalVolume *logVPBL = new G4LogicalVolume(solidVPBL, mat13, "logVPBL");
+ G4PVPlacement *physVPBL2 = new G4PVPlacement(0,
+G4ThreeVector(0*cm,0*cm,-59.16*cm), logVPBL, "physVPBL2", logVMDL, false, 0);
+ G4PVPlacement *physVPBL3 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-57.12*cm), logVPBL, "physVPBL3", logVMDL, false, 0);
+ G4PVPlacement *physVPBL4 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-55.08*cm), logVPBL, "physVPBL4", logVMDL, false, 0);
+ G4PVPlacement *physVPBL5 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-53.04*cm), logVPBL, "physVPBL5", logVMDL, false, 0);
+ G4PVPlacement *physVPBL6 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-51.00*cm), logVPBL, "physVPBL6", logVMDL, false, 0);
+ G4PVPlacement *physVPBL7 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-48.96*cm), logVPBL, "physVPBL7", logVMDL, false, 0);
+ G4PVPlacement *physVPBL8 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-46.92*cm), logVPBL, "physVPBL8", logVMDL, false, 0);
+ G4PVPlacement *physVPBL9 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-44.88*cm), logVPBL, "physVPBL9", logVMDL, false, 0);
+ G4PVPlacement *physVPBL10 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-42.84*cm), logVPBL, "physVPBL10", logVMDL, false, 0);
+ G4PVPlacement *physVPBL11 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-40.80*cm), logVPBL, "physVPBL11", logVMDL, false, 0);
+ G4PVPlacement *physVPBL12 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-38.76*cm), logVPBL, "physVPBL12", logVMDL, false, 0);
+ G4PVPlacement *physVPBL13 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-36.72*cm), logVPBL, "physVPBL13", logVMDL, false, 0);
+ G4PVPlacement *physVPBL14 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-34.68*cm), logVPBL, "physVPBL14", logVMDL, false, 0);
+ G4PVPlacement *physVPBL15 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-32.64*cm), logVPBL, "physVPBL15", logVMDL, false, 0);
+ G4PVPlacement *physVPBL16 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-30.60*cm), logVPBL, "physVPBL16", logVMDL, false, 0);
+ G4PVPlacement *physVPBL17 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-28.56*cm), logVPBL, "physVPBL17", logVMDL, false, 0);
+ G4PVPlacement *physVPBL18 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-26.52*cm), logVPBL, "physVPBL18", logVMDL, false, 0);
+ G4PVPlacement *physVPBL19 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-24.48*cm), logVPBL, "physVPBL19", logVMDL, false, 0);
+ G4PVPlacement *physVPBL20 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-22.44*cm), logVPBL, "physVPBL20", logVMDL, false, 0);
+ G4PVPlacement *physVPBL21 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-20.40*cm), logVPBL, "physVPBL21", logVMDL, false, 0);
+ G4PVPlacement *physVPBL22 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-18.36*cm), logVPBL, "physVPBL22", logVMDL, false, 0);
+ G4PVPlacement *physVPBL23 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-16.32*cm), logVPBL, "physVPBL23", logVMDL, false, 0);
+ G4PVPlacement *physVPBL24 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-14.28*cm), logVPBL, "physVPBL24", logVMDL, false, 0);
+ G4PVPlacement *physVPBL25 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-12.24*cm), logVPBL, "physVPBL25", logVMDL, false, 0);
+ G4PVPlacement *physVPBL26 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-10.20*cm), logVPBL, "physVPBL26", logVMDL, false, 0);
+ G4PVPlacement *physVPBL27 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-8.16*cm), logVPBL, "physVPBL27", logVMDL, false, 0);
+ G4PVPlacement *physVPBL28 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-6.12*cm), logVPBL, "physVPBL28", logVMDL, false, 0);
+ G4PVPlacement *physVPBL29 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-4.08*cm), logVPBL, "physVPBL29", logVMDL, false, 0);
+ G4PVPlacement *physVPBL30 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-2.04*cm), logVPBL, "physVPBL30", logVMDL, false, 0);
+  G4PVPlacement *physVPBL31 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,0*cm), logVPBL, "physVPBL31", logVMDL, false, 0);
+ G4PVPlacement *physVPBL32 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,2.04*cm), logVPBL, "physVPBL32", logVMDL, false, 0);
+ G4PVPlacement *physVPBL33 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,4.08*cm), logVPBL, "physVPBL33", logVMDL, false, 0);
+ G4PVPlacement *physVPBL34 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,6.12*cm), logVPBL, "physVPBL34", logVMDL, false, 0);
+ G4PVPlacement *physVPBL35 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,8.16*cm), logVPBL, "physVPBL35", logVMDL, false, 0);
+ G4PVPlacement *physVPBL36 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,10.20*cm), logVPBL, "physVPBL36", logVMDL, false, 0);
+ G4PVPlacement *physVPBL37 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,12.24*cm), logVPBL, "physVPBL37", logVMDL, false, 0);
+ G4PVPlacement *physVPBL38 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,14.28*cm), logVPBL, "physVPBL38", logVMDL, false, 0);
+ G4PVPlacement *physVPBL39 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,16.32*cm), logVPBL, "physVPBL39", logVMDL, false, 0);
+ G4PVPlacement *physVPBL40 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,18.36*cm), logVPBL, "physVPBL40", logVMDL, false, 0);
+ G4PVPlacement *physVPBL41 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,20.40*cm), logVPBL, "physVPBL41", logVMDL, false, 0);
+ G4PVPlacement *physVPBL42 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,22.44*cm), logVPBL, "physVPBL42", logVMDL, false, 0);
+ G4PVPlacement *physVPBL43 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,24.48*cm), logVPBL, "physVPBL43", logVMDL, false, 0);
+ G4PVPlacement *physVPBL44 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,26.52*cm), logVPBL, "physVPBL44", logVMDL, false, 0);
+ G4PVPlacement *physVPBL45 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,28.56*cm), logVPBL, "physVPBL45", logVMDL, false, 0);
+ G4PVPlacement *physVPBL46 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,30.60*cm), logVPBL, "physVPBL46", logVMDL, false, 0);
+ G4PVPlacement *physVPBL47 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,32.64*cm), logVPBL, "physVPBL47", logVMDL, false, 0);
+ G4PVPlacement *physVPBL48 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,34.68*cm), logVPBL, "physVPBL48", logVMDL, false, 0);
+ G4PVPlacement *physVPBL49 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,36.72*cm), logVPBL, "physVPBL49", logVMDL, false, 0);
+ G4PVPlacement *physVPBL50 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,38.76*cm), logVPBL, "physVPBL50", logVMDL, false, 0);
+ G4PVPlacement *physVPBL51 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,40.80*cm), logVPBL, "physVPBL51", logVMDL, false, 0);
+ G4PVPlacement *physVPBL52 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,42.84*cm), logVPBL, "physVPBL52", logVMDL, false, 0);
+ G4PVPlacement *physVPBL53 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,44.88*cm), logVPBL, "physVPBL53", logVMDL, false, 0);
+ G4PVPlacement *physVPBL54 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,46.92*cm), logVPBL, "physVPBL54", logVMDL, false, 0);
+ G4PVPlacement *physVPBL55 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,48.96*cm), logVPBL, "physVPBL55", logVMDL, false, 0);
+ G4PVPlacement *physVPBL56 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,51.00*cm), logVPBL, "physVPBL56", logVMDL, false, 0);
+ G4PVPlacement *physVPBL57 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,53.04*cm), logVPBL, "physVPBL57", logVMDL, false, 0);
+ G4PVPlacement *physVPBL58 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,55.08*cm), logVPBL, "physVPBL58", logVMDL, false, 0);
+ G4PVPlacement *physVPBL59 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,57.12*cm), logVPBL, "physVPBL59", logVMDL, false, 0);
+ G4PVPlacement *physVPBL60 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,59.16*cm), logVPBL, "physVPBL60", logVMDL, false, 0);
+
+ //VRPL  (4-level: CAVE->VETO->VMDL->VPBL->VRPL)
+
+  G4Box *solidVRPL = new G4Box("VPRL", 0.1*cm, 8.6*cm, 0.8*cm);
+  G4LogicalVolume *logVRPL = new G4LogicalVolume(solidVRPL, mat25, "logVRPL");
+ G4PVPlacement *physVRPL1 = new G4PVPlacement(0,
+G4ThreeVector(9.8*cm,0.75*cm,0*cm), logVRPL, "physVRPL1", logVPBL, false, 0);
+
+//-----------Large modules Al-Pb-Al --------------
+
+ //VMLA  (2-level: CAVE->VETO->VMLA) 
+
+  G4Box *solidVMLA = new G4Box("VMLA", 10.0*cm, 10.0*cm, 69.48*cm);
+  G4LogicalVolume *logVMLA = new G4LogicalVolume(solidVMLA, mat10, "logVMLA");
+  G4PVPlacement *physVMLA17 = new G4PVPlacement(0, G4ThreeVector(30*cm,50*cm,0*cm), logVMLA, "physVMLA17", logVETO, false, 0);
+ G4PVPlacement *physVMLA18 = new G4PVPlacement(0, G4ThreeVector(10*cm,50*cm,0*cm), logVMLA, "physVMLA18", logVETO, false, 0);
+ G4PVPlacement *physVMLA19 = new G4PVPlacement(0, G4ThreeVector(-10*cm,50*cm,0*cm), logVMLA, "physVMLA19", logVETO, false, 0);
+ G4PVPlacement *physVMLA20 = new G4PVPlacement(0, G4ThreeVector(-30*cm,50*cm,0*cm), logVMLA, "physVMLA20", logVETO, false, 0);
+ G4PVPlacement *physVMLA21 = new G4PVPlacement(0, G4ThreeVector(50*cm,30*cm,0*cm), logVMLA, "physVMLA21", logVETO, false, 0);
+G4PVPlacement *physVMLA26 = new G4PVPlacement(0, G4ThreeVector(-50*cm,30*cm,0*cm), logVMLA, "physVMLA26", logVETO, false, 0);
+ G4PVPlacement *physVMLA27 = new G4PVPlacement(0, G4ThreeVector(50*cm,10*cm,0*cm), logVMLA, "physVMLA27", logVETO, false, 0);
+G4PVPlacement *physVMLA30 = new G4PVPlacement(0, G4ThreeVector(-50*cm,10*cm,0*cm), logVMLA, "physVMLA30", logVETO, false, 0);
+G4PVPlacement *physVMLA31 = new G4PVPlacement(0, G4ThreeVector(50*cm,-10*cm,0*cm), logVMLA, "physVMLA31", logVETO, false, 0);
+G4PVPlacement *physVMLA34 = new G4PVPlacement(0, G4ThreeVector(-50*cm,-10*cm,0*cm), logVMLA, "physVMLA34", logVETO, false, 0);
+G4PVPlacement *physVMLA35 = new G4PVPlacement(0, G4ThreeVector(50*cm,-30*cm,0*cm), logVMLA, "physVMLA35", logVETO, false, 0);
+G4PVPlacement *physVMLA40 = new G4PVPlacement(0, G4ThreeVector(-50*cm,-30*cm,0*cm), logVMLA, "physVMLA40", logVETO, false, 0);
+G4PVPlacement *physVMLA41 = new G4PVPlacement(0, G4ThreeVector(30*cm,-50*cm,0*cm), logVMLA, "physVMLA41", logVETO, false, 0);
+G4PVPlacement *physVMLA42 = new G4PVPlacement(0, G4ThreeVector(10*cm,-50*cm,0*cm), logVMLA, "physVMLA42", logVETO, false, 0);
+G4PVPlacement *physVMLA43 = new G4PVPlacement(0, G4ThreeVector(-10*cm,-50*cm,0*cm), logVMLA, "physVMLA43", logVETO, false, 0);
+G4PVPlacement *physVMLA44 = new G4PVPlacement(0, G4ThreeVector(-30*cm,-50*cm,0*cm), logVMLA, "physVMLA44", logVETO, false, 0);
+
+//VFLA  (3-level: CAVE->VETO->VMLA->VFLA)
+
+G4Box *solidVFLA = new G4Box("VFLA", 9.9*cm, 9.85*cm, 1.0*cm);
+  G4LogicalVolume *logVFLA = new G4LogicalVolume(solidVFLA, mat10, "logVFLA");
+ G4PVPlacement *physVFLA1 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-68.48*cm), logVFLA, "physVFLA1", logVMLA, false, 0);
+ G4PVPlacement *physVFLA2 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,68.48*cm), logVFLA, "physVFLA2", logVMLA, false, 0);
+
+//VRFA  (4-level: CAVE->VETO->VMLA->VFLA->VRFA)
+
+  G4Box *solidVRFA = new G4Box("VRFA", 0.1*cm, 8.6*cm, 1.*cm);
+  G4LogicalVolume *logVRFA = new G4LogicalVolume(solidVRFA, mat25, "logVRFA");
+ G4PVPlacement *physVRFA1 = new G4PVPlacement(0, G4ThreeVector(9.8*cm,0.75*cm,0*cm), logVRFA, "physVRFA1", logVFLA, false, 0);
+
+//VTLA  (3-level: CAVE->VETO->VMLA->VTLA)
+
+  G4Box *solidVTLA = new G4Box("VTLA", 9.9*cm, 9.85*cm, 0.22*cm);
+  G4LogicalVolume *logVTLA = new G4LogicalVolume(solidVTLA, mat38, "logVTLA");
+  G4PVPlacement *physVTLA1 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-67.26*cm), logVTLA, "physVTLA1", logVMLA, false, 0);
+ G4PVPlacement *physVTLA2 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-64.98*cm), logVTLA, "physVTLA2", logVMLA, false, 0);
+ G4PVPlacement *physVTLA3 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-62.7*cm), logVTLA, "physVTLA3", logVMLA, false, 0);
+ G4PVPlacement *physVTLA4 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-60.42*cm), logVTLA, "physVTLA4", logVMLA, false, 0);
+ G4PVPlacement *physVTLA5 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-58.14*cm), logVTLA, "physVTLA5", logVMLA, false, 0);
+ G4PVPlacement *physVTLA6 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-55.86*cm), logVTLA, "physVTLA6", logVMLA, false, 0);
+ G4PVPlacement *physVTLA7 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-53.58*cm), logVTLA, "physVTLA7", logVMLA, false, 0);
+ G4PVPlacement *physVTLA8 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-51.3*cm), logVTLA, "physVTLA8", logVMLA, false, 0);
+ G4PVPlacement *physVTLA9 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-49.02*cm), logVTLA, "physVTLA9", logVMLA, false, 0);
+ G4PVPlacement *physVTLA10 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-46.74*cm), logVTLA, "physVTLA10", logVMLA, false, 0);
+ G4PVPlacement *physVTLA11 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-44.46*cm), logVTLA, "physVTLA11", logVMLA, false, 0);
+ G4PVPlacement *physVTLA12 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-42.18*cm), logVTLA, "physVTLA12", logVMLA, false, 0);
+ G4PVPlacement *physVTLA13 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-39.9*cm), logVTLA, "physVTLA13", logVMLA, false, 0);
+ G4PVPlacement *physVTLA14 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-37.62*cm), logVTLA, "physVTLA14", logVMLA, false, 0);
+ G4PVPlacement *physVTLA15 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-35.34*cm), logVTLA, "physVTLA15", logVMLA, false, 0);
+ G4PVPlacement *physVTLA16 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-33.06*cm), logVTLA, "physVTLA16", logVMLA, false, 0);
+ G4PVPlacement *physVTLA17 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-30.78*cm), logVTLA, "physVTLA17", logVMLA, false, 0);
+ G4PVPlacement *physVTLA18 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-28.5*cm), logVTLA, "physVTLA18", logVMLA, false, 0);
+ G4PVPlacement *physVTLA19 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-26.22*cm), logVTLA, "physVTLA19", logVMLA, false, 0);
+ G4PVPlacement *physVTLA20 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-23.94*cm), logVTLA, "physVTLA20", logVMLA, false, 0);
+ G4PVPlacement *physVTLA21 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-21.66*cm), logVTLA, "physVTLA21", logVMLA, false, 0);
+ G4PVPlacement *physVTLA22 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-19.38*cm), logVTLA, "physVTLA22", logVMLA, false, 0);
+ G4PVPlacement *physVTLA23 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-17.1*cm), logVTLA, "physVTLA23", logVMLA, false, 0);
+ G4PVPlacement *physVTLA24 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-14.82*cm), logVTLA, "physVTLA24", logVMLA, false, 0);
+ G4PVPlacement *physVTLA25 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-12.54*cm), logVTLA, "physVTLA25", logVMLA, false, 0);
+ G4PVPlacement *physVTLA26 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-10.26*cm), logVTLA, "physVTLA26", logVMLA, false, 0);
+ G4PVPlacement *physVTLA27 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-7.98*cm), logVTLA, "physVTLA27", logVMLA, false, 0);
+ G4PVPlacement *physVTLA28 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-5.7*cm), logVTLA, "physVTLA28", logVMLA, false, 0);
+ G4PVPlacement *physVTLA29 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-3.42*cm), logVTLA, "physVTLA29", logVMLA, false, 0);
+ G4PVPlacement *physVTLA30 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-1.14*cm), logVTLA, "physVTLA30", logVMLA, false, 0);
+  G4PVPlacement *physVTLA31 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,1.14*cm), logVTLA, "physVTLA31", logVMLA, false, 0);
+ G4PVPlacement *physVTLA32 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,3.42*cm), logVTLA, "physVTLA32", logVMLA, false, 0);
+ G4PVPlacement *physVTLA33 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,5.7*cm), logVTLA, "physVTLA33", logVMLA, false, 0);
+ G4PVPlacement *physVTLA34 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,7.98*cm), logVTLA, "physVTLA34", logVMLA, false, 0);
+ G4PVPlacement *physVTLA35 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,10.26*cm), logVTLA, "physVTLA35", logVMLA, false, 0);
+ G4PVPlacement *physVTLA36 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,12.54*cm), logVTLA, "physVTLA36", logVMLA, false, 0);
+ G4PVPlacement *physVTLA37 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,14.82*cm), logVTLA, "physVTLA37", logVMLA, false, 0);
+ G4PVPlacement *physVTLA38 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,17.1*cm), logVTLA, "physVTLA38", logVMLA, false, 0);
+ G4PVPlacement *physVTLA39 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,19.38*cm), logVTLA, "physVTLA39", logVMLA, false, 0);
+ G4PVPlacement *physVTLA40 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,21.66*cm), logVTLA, "physVTLA40", logVMLA, false, 0);
+ G4PVPlacement *physVTLA41 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,23.94*cm), logVTLA, "physVTLA41", logVMLA, false, 0);
+ G4PVPlacement *physVTLA42 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,26.22*cm), logVTLA, "physVTLA42", logVMLA, false, 0);
+ G4PVPlacement *physVTLA43 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,28.5*cm), logVTLA, "physVTLA43", logVMLA, false, 0);
+ G4PVPlacement *physVTLA44 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,30.78*cm), logVTLA, "physVTLA44", logVMLA, false, 0);
+ G4PVPlacement *physVTLA45 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,33.06*cm), logVTLA, "physVTLA45", logVMLA, false, 0);
+ G4PVPlacement *physVTLA46 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,35.34*cm), logVTLA, "physVTLA46", logVMLA, false, 0);
+ G4PVPlacement *physVTLA47 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,37.62*cm), logVTLA, "physVTLA47", logVMLA, false, 0);
+ G4PVPlacement *physVTLA48 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,39.9*cm), logVTLA, "physVTLA48", logVMLA, false, 0);
+ G4PVPlacement *physVTLA49 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,42.18*cm), logVTLA, "physVTLA49", logVMLA, false, 0);
+ G4PVPlacement *physVTLA50 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,44.46*cm), logVTLA, "physVTLA50", logVMLA, false, 0);
+ G4PVPlacement *physVTLA51 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,46.74*cm), logVTLA, "physVTLA51", logVMLA, false, 0);
+ G4PVPlacement *physVTLA52 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,49.02*cm), logVTLA, "physVTLA52", logVMLA, false, 0);
+ G4PVPlacement *physVTLA53 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,51.3*cm), logVTLA, "physVTLA53", logVMLA, false, 0);
+ G4PVPlacement *physVTLA54 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,53.58*cm), logVTLA, "physVTLA54", logVMLA, false, 0);
+ G4PVPlacement *physVTLA55 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,55.86*cm), logVTLA, "physVTLA55", logVMLA, false, 0);
+ G4PVPlacement *physVTLA56 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,58.14*cm), logVTLA, "physVTLA56", logVMLA, false, 0);
+ G4PVPlacement *physVTLA57 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,60.42*cm), logVTLA, "physVTLA57", logVMLA, false, 0);
+ G4PVPlacement *physVTLA58 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,62.7*cm), logVTLA, "physVTLA58", logVMLA, false, 0);
+ G4PVPlacement *physVTLA59 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,64.98*cm), logVTLA, "physVTLA59", logVMLA, false, 0);
+ G4PVPlacement *physVTLA60 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,67.26*cm), logVTLA, "physVTLA60", logVMLA, false, 0); 
+
+ //VRYA  (4-level: CAVE->VETO->VMLA->VTLA->VRYA)
+
+ G4Box *solidVRYA = new G4Box("VRYA", 0.01*cm, 8.6*cm, 0.22*cm);
+  G4LogicalVolume *logVRYA = new G4LogicalVolume(solidVRYA, mat25, "logVRYA");
+ G4PVPlacement *physVRYA1 = new G4PVPlacement(0, G4ThreeVector(9.89*cm,0.75*cm,0.0*cm), logVRYA, "physVRYA1", logVTLA, false, 0);
+
+ //VRVA  (4-level: CAVE->VETO->VMLA->VTLA->VRVA)
+
+ G4Box *solidVRVA = new G4Box("VRVA", 0.09*cm, 8.6*cm, 0.01*cm);
+  G4LogicalVolume *logVRVA = new G4LogicalVolume(solidVRVA, mat25, "logVRVA");
+ G4PVPlacement *physVRVA1 = new G4PVPlacement(0, G4ThreeVector(9.79*cm,0.75*cm,-0.21*cm), logVRVA, "physVRVA1", logVTLA, false, 0);
+ G4PVPlacement *physVRVA2 = new G4PVPlacement(0, G4ThreeVector(9.79*cm,0.75*cm,0.21*cm), logVRVA, "physVRVA2", logVTLA, false, 0);
+
+ //VSLA  (4-level: CAVE->VETO->VMLA->VTLA->VSLA)
+
+ G4Box *solidVSLA = new G4Box("VSLA", 9.88*cm, 9.83*cm, 0.2*cm);
+  G4LogicalVolume *logVSLA = new G4LogicalVolume(solidVSLA, mat25, "logVSLA");
+ G4PVPlacement *physVSLA1 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,0*cm), logVSLA, "physVSLA1", logVTLA, false, 0);
+
+ //VRSA  (5-level: CAVE->VETO->VMLA->VTLA->VSLA->VRSA)
+
+ G4Box *solidVRSA = new G4Box("VRSA", 0.09*cm, 8.6*cm, 0.2*cm);
+  G4LogicalVolume *logVRSA = new G4LogicalVolume(solidVRSA, mat25, "logVRSA");
+ G4PVPlacement *physVRSA1 = new G4PVPlacement(0, G4ThreeVector(9.79*cm,0.75*cm,0*cm), logVRSA, "physVRSA1", logVSLA, false, 0);
+
+ //VPBA  (3-level: CAVE->VETO->VMLA->VPBA)
+
+  G4Box *solidVPBA = new G4Box("VPBA", 9.9*cm, 9.85*cm, 0.92*cm);
+  G4LogicalVolume *logVPBA = new G4LogicalVolume(solidVPBA, mat15, "logVPBA");
+ G4PVPlacement *physVPBA2 = new G4PVPlacement(0,
+G4ThreeVector(0*cm,0*cm,-66.12*cm), logVPBA, "physVPBA2", logVMLA, false, 0);
+ G4PVPlacement *physVPBA3 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-63.84*cm), logVPBA, "physVPBA3", logVMLA, false, 0);
+ G4PVPlacement *physVPBA4 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-61.56*cm), logVPBA, "physVPBA4", logVMLA, false, 0);
+ G4PVPlacement *physVPBA5 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-59.28*cm), logVPBA, "physVPBA5", logVMLA, false, 0);
+ G4PVPlacement *physVPBA6 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-57.00*cm), logVPBA, "physVPBA6", logVMLA, false, 0);
+ G4PVPlacement *physVPBA7 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-54.72*cm), logVPBA, "physVPBA7", logVMLA, false, 0);
+ G4PVPlacement *physVPBA8 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-52.44*cm), logVPBA, "physVPBA8", logVMLA, false, 0);
+ G4PVPlacement *physVPBA9 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-50.16*cm), logVPBA, "physVPBA9", logVMLA, false, 0);
+ G4PVPlacement *physVPBA10 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-47.88*cm), logVPBA, "physVPBA10", logVMLA, false, 0);
+ G4PVPlacement *physVPBA11 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-45.60*cm), logVPBA, "physVPBA11", logVMLA, false, 0);
+ G4PVPlacement *physVPBA12 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-43.32*cm), logVPBA, "physVPBA12", logVMLA, false, 0);
+ G4PVPlacement *physVPBA13 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-41.04*cm), logVPBA, "physVPBA13", logVMLA, false, 0);
+ G4PVPlacement *physVPBA14 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-38.76*cm), logVPBA, "physVPBA14", logVMLA, false, 0);
+ G4PVPlacement *physVPBA15 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-36.48*cm), logVPBA, "physVPBA15", logVMLA, false, 0);
+ G4PVPlacement *physVPBA16 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-34.20*cm), logVPBA, "physVPBA16", logVMLA, false, 0);
+ G4PVPlacement *physVPBA17 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-31.92*cm), logVPBA, "physVPBA17", logVMLA, false, 0);
+ G4PVPlacement *physVPBA18 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-29.64*cm), logVPBA, "physVPBA18", logVMLA, false, 0);
+ G4PVPlacement *physVPBA19 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-27.36*cm), logVPBA, "physVPBA19", logVMLA, false, 0);
+ G4PVPlacement *physVPBA20 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-25.08*cm), logVPBA, "physVPBA20", logVMLA, false, 0);
+ G4PVPlacement *physVPBA21 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-22.80*cm), logVPBA, "physVPBA21", logVMLA, false, 0);
+ G4PVPlacement *physVPBA22 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-20.52*cm), logVPBA, "physVPBA22", logVMLA, false, 0);
+ G4PVPlacement *physVPBA23 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-18.24*cm), logVPBA, "physVPBA23", logVMLA, false, 0);
+ G4PVPlacement *physVPBA24 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-15.96*cm), logVPBA, "physVPBA24", logVMLA, false, 0);
+ G4PVPlacement *physVPBA25 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-13.68*cm), logVPBA, "physVPBA25", logVMLA, false, 0);
+ G4PVPlacement *physVPBA26 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-11.40*cm), logVPBA, "physVPBA26", logVMLA, false, 0);
+ G4PVPlacement *physVPBA27 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-9.12*cm), logVPBA, "physVPBA27", logVMLA, false, 0);
+ G4PVPlacement *physVPBA28 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-6.84*cm), logVPBA, "physVPBA28", logVMLA, false, 0);
+ G4PVPlacement *physVPBA29 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-4.56*cm), logVPBA, "physVPBA29", logVMLA, false, 0);
+ G4PVPlacement *physVPBA30 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,-2.28*cm), logVPBA, "physVPBA30", logVMLA, false, 0);
+  G4PVPlacement *physVPBA31 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,0*cm), logVPBA, "physVPBA31", logVMLA, false, 0);
+ G4PVPlacement *physVPBA32 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,2.28*cm), logVPBA, "physVPBA32", logVMLA, false, 0);
+ G4PVPlacement *physVPBA33 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,4.56*cm), logVPBA, "physVPBA33", logVMLA, false, 0);
+ G4PVPlacement *physVPBA34 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,6.84*cm), logVPBA, "physVPBA34", logVMLA, false, 0);
+ G4PVPlacement *physVPBA35 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,9.12*cm), logVPBA, "physVPBA35", logVMLA, false, 0);
+ G4PVPlacement *physVPBA36 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,11.40*cm), logVPBA, "physVPBA36", logVMLA, false, 0);
+ G4PVPlacement *physVPBA37 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,13.68*cm), logVPBA, "physVPBA37", logVMLA, false, 0);
+ G4PVPlacement *physVPBA38 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,15.96*cm), logVPBA, "physVPBA38", logVMLA, false, 0);
+ G4PVPlacement *physVPBA39 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,18.24*cm), logVPBA, "physVPBA39", logVMLA, false, 0);
+ G4PVPlacement *physVPBA40 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,20.52*cm), logVPBA, "physVPBA40", logVMLA, false, 0);
+ G4PVPlacement *physVPBA41 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,22.80*cm), logVPBA, "physVPBA41", logVMLA, false, 0);
+ G4PVPlacement *physVPBA42 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,25.08*cm), logVPBA, "physVPBA42", logVMLA, false, 0);
+ G4PVPlacement *physVPBA43 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,27.36*cm), logVPBA, "physVPBA43", logVMLA, false, 0);
+ G4PVPlacement *physVPBA44 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,29.64*cm), logVPBA, "physVPBA44", logVMLA, false, 0);
+ G4PVPlacement *physVPBA45 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,31.92*cm), logVPBA, "physVPBA45", logVMLA, false, 0);
+ G4PVPlacement *physVPBA46 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,34.20*cm), logVPBA, "physVPBA46", logVMLA, false, 0);
+ G4PVPlacement *physVPBA47 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,36.48*cm), logVPBA, "physVPBA47", logVMLA, false, 0);
+ G4PVPlacement *physVPBA48 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,38.76*cm), logVPBA, "physVPBA48", logVMLA, false, 0);
+ G4PVPlacement *physVPBA49 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,41.04*cm), logVPBA, "physVPBA49", logVMLA, false, 0);
+ G4PVPlacement *physVPBA50 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,43.32*cm), logVPBA, "physVPBA50", logVMLA, false, 0);
+ G4PVPlacement *physVPBA51 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,45.60*cm), logVPBA, "physVPBA51", logVMLA, false, 0);
+ G4PVPlacement *physVPBA52 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,47.88*cm), logVPBA, "physVPBA52", logVMLA, false, 0);
+ G4PVPlacement *physVPBA53 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,50.16*cm), logVPBA, "physVPBA53", logVMLA, false, 0);
+ G4PVPlacement *physVPBA54 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,52.44*cm), logVPBA, "physVPBA54", logVMLA, false, 0);
+ G4PVPlacement *physVPBA55 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,54.72*cm), logVPBA, "physVPBA55", logVMLA, false, 0);
+ G4PVPlacement *physVPBA56 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,57.00*cm), logVPBA, "physVPBA56", logVMLA, false, 0);
+ G4PVPlacement *physVPBA57 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,59.28*cm), logVPBA, "physVPBA57", logVMLA, false, 0);
+ G4PVPlacement *physVPBA58 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,61.56*cm), logVPBA, "physVPBA58", logVMLA, false, 0);
+ G4PVPlacement *physVPBA59 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,63.84*cm), logVPBA, "physVPBA59", logVMLA, false, 0);
+ G4PVPlacement *physVPBA60 = new G4PVPlacement(0, G4ThreeVector(0*cm,0*cm,66.12*cm), logVPBA, "physVPBA60", logVMLA, false, 0);
+
+ //VALA  (4-level: CAVE->VETO->VMLA->VPBA->VALA)
+
+  G4Box *solidVALA = new G4Box("VALA", 9.9*cm, 9.85*cm, 0.04*cm);
+  G4LogicalVolume *logVALA = new G4LogicalVolume(solidVALA, mat9, "logVALA");
+ G4PVPlacement *physVALA1 = new G4PVPlacement(0,
+G4ThreeVector(0*cm,0*cm,-0.88*cm), logVALA, "physVALA1", logVPBA, false, 0);
+ G4PVPlacement *physVALA2 = new G4PVPlacement(0,
+G4ThreeVector(0*cm,0*cm,-0.50*cm), logVALA, "physVALA2", logVPBA, false, 0);
+ G4PVPlacement *physVALA3 = new G4PVPlacement(0,
+G4ThreeVector(0*cm,0*cm,-0.42*cm), logVALA, "physVALA3", logVPBA, false, 0);
+ G4PVPlacement *physVALA4 = new G4PVPlacement(0,
+G4ThreeVector(0*cm,0*cm,-0.04*cm), logVALA, "physVALA4", logVPBA, false, 0);
+ G4PVPlacement *physVALA5 = new G4PVPlacement(0,
+G4ThreeVector(0*cm,0*cm,0.04*cm), logVALA, "physVALA5", logVPBA, false, 0);
+ G4PVPlacement *physVALA6 = new G4PVPlacement(0,
+G4ThreeVector(0*cm,0*cm,0.42*cm), logVALA, "physVALA6", logVPBA, false, 0);
+ G4PVPlacement *physVALA7 = new G4PVPlacement(0,
+G4ThreeVector(0*cm,0*cm,0.50*cm), logVALA, "physVALA7", logVPBA, false, 0);
+ G4PVPlacement *physVALA8 = new G4PVPlacement(0,
+G4ThreeVector(0*cm,0*cm,0.88*cm), logVALA, "physVALA8", logVPBA, false, 0);
+
+ //VRAA  (4-level: CAVE->VETO->VMLA->VPBA->VALA->VRAA)
+
+  G4Box *solidVRAA = new G4Box("VRAA", 0.1*cm, 8.6*cm, 0.04*cm);
+  G4LogicalVolume *logVRAA = new G4LogicalVolume(solidVRAA, mat25, "logVRAA");
+ G4PVPlacement *physVRAA1 = new G4PVPlacement(0,
+G4ThreeVector(9.8*cm,0.75*cm,0*cm), logVRAA, "physVRAA1", logVALA, false, 0);
+
+ //VPLA  (4-level: CAVE->VETO->VMLA->VPBA->VPLA)
+
+  G4Box *solidVPLA = new G4Box("VPLA", 9.9*cm, 9.85*cm, 0.15*cm);
+  G4LogicalVolume *logVPLA = new G4LogicalVolume(solidVPLA, mat13, "logVPLA");
+ G4PVPlacement *physVPLA1 = new G4PVPlacement(0,
+G4ThreeVector(0*cm,0*cm,-0.69*cm), logVPLA, "physVPLA1", logVPBA, false, 0);
+ G4PVPlacement *physVPLA2 = new G4PVPlacement(0,
+G4ThreeVector(0*cm,0*cm,-0.23*cm), logVPLA, "physVPLA2", logVPBA, false, 0);
+ G4PVPlacement *physVPLA3 = new G4PVPlacement(0,
+G4ThreeVector(0*cm,0*cm,0.23*cm), logVPLA, "physVPLA3", logVPBA, false, 0);
+ G4PVPlacement *physVPLA4 = new G4PVPlacement(0,
+G4ThreeVector(0*cm,0*cm,0.69*cm), logVPLA, "physVPLA4", logVPBA, false, 0);
+
+ //VRPA  (4-level: CAVE->VETO->VMLA->VPBA->VRLA->VRPA)
+
+  G4Box *solidVRPA = new G4Box("VRPA", 0.1*cm, 8.6*cm, 0.15*cm);
+  G4LogicalVolume *logVRPA = new G4LogicalVolume(solidVRPA, mat25, "logVRPA");
+ G4PVPlacement *physVRPA1 = new G4PVPlacement(0,
+G4ThreeVector(9.8*cm,0.75*cm,0*cm), logVRPA, "physVRPA1", logVPLA, false, 0);
+
+//-------- Sensitive detectors ----------------------
+
+  SensitiveDetector *detector = new SensitiveDetector("hit there");
+  
+  G4SDManager* SDman = G4SDManager::GetSDMpointer();
+  SDman->AddNewDetector(detector);
+
+//  logVMOD->SetSensitiveDetector(detector);
+//  logVMDL->SetSensitiveDetector(detector);
+//  logVMLA->SetSensitiveDetector(detector);
+
+  logVSC_->SetSensitiveDetector(detector);
+  logVSCL->SetSensitiveDetector(detector);
+  logVSLA->SetSensitiveDetector(detector);
+
+//  logVFE_->SetSensitiveDetector(detector);
+//  logVFEL->SetSensitiveDetector(detector);
+//  logVFLA->SetSensitiveDetector(detector);
+
+//  logVPB_->SetSensitiveDetector(detector);
+//  logVPBL->SetSensitiveDetector(detector);
+//  logVPLA->SetSensitiveDetector(detector);
+//  logVALA->SetSensitiveDetector(detector);
+
+//  logVETO->SetSensitiveDetector(detector);
+//  logVTYV->SetSensitiveDetector(detector);
+//  logVRFE->SetSensitiveDetector(detector);
+//  logVSC_->SetSensitiveDetector(detector);
+//  logVRTA->SetSensitiveDetector(detector);
+//  logVRTY->SetSensitiveDetector(detector);
+//  logVRPB->SetSensitiveDetector(detector);
+
+
+//----------Visualization settings -------------------
+
+  world->getLogic()->SetVisAttributes (G4VisAttributes::Invisible);
+
+  logVETO->SetVisAttributes (G4VisAttributes::Invisible);
+//  G4VisAttributes* VETOVisAtt = new G4VisAttributes();
+//  VETOVisAtt-> SetForceWireframe (true);
+//  VETOVisAtt-> SetForceSolid (true); 
+//  logVETO->SetVisAttributes(VETOVisAtt);
+
+  G4VisAttributes* VMODVisAtt = new G4VisAttributes();
+  VMODVisAtt-> SetVisibility(true);
+  VMODVisAtt-> SetColour(0.0, 0.0, 1.0); //dark blue 
+  logVMOD-> SetVisAttributes(VMODVisAtt);
+
+  G4VisAttributes* VMDLVisAtt = new G4VisAttributes();
+  VMDLVisAtt-> SetVisibility(true);
+  VMDLVisAtt-> SetColour(0.0, 1.0, 0.0);//green
+  logVMDL->SetVisAttributes(VMDLVisAtt);
+
+  G4VisAttributes* VMLAVisAtt = new G4VisAttributes();
+  VMLAVisAtt-> SetVisibility(true);
+  VMLAVisAtt-> SetColour(1.0, 0.0, 1.0);//violet
+  logVMLA->SetVisAttributes(VMLAVisAtt);
+//------------------------------------------------------
+
+  G4VisAttributes* VTYVVisAtt = new G4VisAttributes();
+  VTYVVisAtt-> SetVisibility(true);
+  VTYVVisAtt-> SetColour(1.0, 1.0, 0.0);//yellow
+  logVTYV->SetVisAttributes(VTYVVisAtt);
+
+  G4VisAttributes* VTYLVisAtt = new G4VisAttributes();
+  VTYLVisAtt-> SetVisibility(true);
+  VTYLVisAtt-> SetColour(1.0, 1.0, 0.0);//yellow
+  logVTYL->SetVisAttributes(VTYLVisAtt);
+
+  G4VisAttributes* VTLAVisAtt = new G4VisAttributes();
+  VTLAVisAtt-> SetVisibility(true);
+  VTLAVisAtt-> SetColour(1.0, 1.0, 0.0);//yellow
+  logVTLA->SetVisAttributes(VTLAVisAtt);
+//----------------------------------------------------
+  G4VisAttributes* VFE_VisAtt = new G4VisAttributes();
+  VFE_VisAtt-> SetVisibility(true);
+  VFE_VisAtt-> SetColour(1.0, 0.0, 0.0);//red
+  logVFE_->SetVisAttributes(VFE_VisAtt);
+
+  G4VisAttributes* VFELVisAtt = new G4VisAttributes();
+  VFELVisAtt-> SetVisibility(true);
+  VFELVisAtt-> SetColour(1.0, 0.0, 0.0);//red
+  logVFEL->SetVisAttributes(VFELVisAtt);
+
+  G4VisAttributes* VFLAVisAtt = new G4VisAttributes();
+  VFLAVisAtt-> SetVisibility(true);
+  VFLAVisAtt-> SetColour(1.0, 0.0, 0.0);//red
+  logVFLA->SetVisAttributes(VFLAVisAtt);
+//----------------------------------------------------
+  G4VisAttributes* VRFEVisAtt = new G4VisAttributes();
+  VRFEVisAtt-> SetVisibility(true);
+  VRFEVisAtt-> SetColour(1.0, 0.5, 0.0);//oringe
+  logVRFE->SetVisAttributes(VRFEVisAtt);
+
+  G4VisAttributes* VRFLVisAtt = new G4VisAttributes();
+  VRFLVisAtt-> SetVisibility(true);
+  VRFLVisAtt-> SetColour(1.0, 0.5, 0.0);//oringe
+  logVRFL->SetVisAttributes(VRFLVisAtt);
+
+  G4VisAttributes* VRFAVisAtt = new G4VisAttributes();
+  VRFAVisAtt-> SetVisibility(true);
+  VRFAVisAtt-> SetColour(1.0, 0.5, 0.0);//oringe
+  logVRFA->SetVisAttributes(VRFAVisAtt);
+//----------------------------------------------------
+
+  G4VisAttributes* VRTYVisAtt = new G4VisAttributes();
+  VRTYVisAtt-> SetVisibility(true);
+  VRTYVisAtt-> SetColour(0.5, 0.0, 0.0);//
+  logVRTY->SetVisAttributes(VRTYVisAtt);
+
+  G4VisAttributes* VRYLVisAtt = new G4VisAttributes();
+  VRYLVisAtt-> SetVisibility(true);
+  VRYLVisAtt-> SetColour(0.5, 0.0, 0.0);//
+  logVRYL->SetVisAttributes(VRYLVisAtt);
+
+  G4VisAttributes* VRYAVisAtt = new G4VisAttributes();
+  VRYAVisAtt-> SetVisibility(true);
+  VRYAVisAtt-> SetColour(0.5, 0.0, 0.0);//
+  logVRYA->SetVisAttributes(VRYAVisAtt);
+//---------------------------------------------------
+  G4VisAttributes* VRTAVisAtt = new G4VisAttributes();
+  VRTAVisAtt-> SetVisibility(true);
+  VRTAVisAtt-> SetColour(0.5, 0.5, 0.0);//
+  logVRTA->SetVisAttributes(VRTAVisAtt);
+
+  G4VisAttributes* VRALVisAtt = new G4VisAttributes();
+  VRALVisAtt-> SetVisibility(true);
+  VRALVisAtt-> SetColour(0.5, 0.5, 0.0);//
+  logVRAL->SetVisAttributes(VRALVisAtt);
+
+  G4VisAttributes* VRVAVisAtt = new G4VisAttributes();
+  VRVAVisAtt-> SetVisibility(true);
+  VRVAVisAtt-> SetColour(0.5, 0.5, 0.0);//
+  logVRVA->SetVisAttributes(VRVAVisAtt);
+//--------------------------------------------------
+  G4VisAttributes* VSC_VisAtt = new G4VisAttributes();
+  VSC_VisAtt-> SetVisibility(true);
+  VSC_VisAtt-> SetColour(0.0, 1.0, 0.0);//green
+  logVSC_->SetVisAttributes(VSC_VisAtt);
+
+  G4VisAttributes* VSCLVisAtt = new G4VisAttributes();
+  VSCLVisAtt-> SetVisibility(true);
+  VSCLVisAtt-> SetColour(0.0, 1.0, 0.0);//green
+  logVSCL->SetVisAttributes(VSCLVisAtt);
+
+  G4VisAttributes* VSLAVisAtt = new G4VisAttributes();
+  VSLAVisAtt-> SetVisibility(true);
+  VSLAVisAtt-> SetColour(0.0, 1.0, 0.0);//green
+  logVSLA->SetVisAttributes(VSLAVisAtt);
+//----------------------------------------------------
+  G4VisAttributes* VRSCVisAtt = new G4VisAttributes();
+  VRSCVisAtt-> SetVisibility(true);
+  VRSCVisAtt-> SetColour(0.0, 1.0, 0.0);//green
+  logVRSC->SetVisAttributes(VRSCVisAtt);
+
+  G4VisAttributes* VRSLVisAtt = new G4VisAttributes();
+  VRSLVisAtt-> SetVisibility(true);
+  VRSLVisAtt-> SetColour(0.0, 1.0, 0.0);//green
+  logVRSL->SetVisAttributes(VRSLVisAtt);
+
+  G4VisAttributes* VRSAVisAtt = new G4VisAttributes();
+  VRSAVisAtt-> SetVisibility(true);
+  VRSAVisAtt-> SetColour(0.0, 1.0, 0.0);//green
+  logVRSA->SetVisAttributes(VRSAVisAtt);
+//----------------------------------------------------
+
+
+  G4VisAttributes* VPB_VisAtt = new G4VisAttributes();
+  VPB_VisAtt-> SetVisibility(true);
+  VPB_VisAtt-> SetColour(0.0, 0.0, 1.0);//dark blue
+  logVPB_->SetVisAttributes(VPB_VisAtt);
+
+  G4VisAttributes* VPBLVisAtt = new G4VisAttributes();
+  VPBLVisAtt-> SetVisibility(true);
+  VPBLVisAtt-> SetColour(0.0, 0.0, 1.0);//dark blue
+  logVPBL->SetVisAttributes(VPBLVisAtt);
+
+  G4VisAttributes* VPBAVisAtt = new G4VisAttributes();
+  VPBAVisAtt-> SetVisibility(true);
+  VPBAVisAtt-> SetColour(0.0, 0.0, 1.0);//dark blue
+  logVPBA->SetVisAttributes(VPBAVisAtt);
+//--------------------------------------------------
+
+  G4VisAttributes* VRPBVisAtt = new G4VisAttributes();
+  VRPBVisAtt-> SetVisibility(true);
+  VRPBVisAtt-> SetColour(0.0, 0.5, 1.0);//blue
+  logVRPB->SetVisAttributes(VRPBVisAtt);
+
+  G4VisAttributes* VRPLVisAtt = new G4VisAttributes();
+  VRPLVisAtt-> SetVisibility(true);
+  VRPLVisAtt-> SetColour(0.0, 0.5, 1.0);//blue
+  logVRPL->SetVisAttributes(VRPLVisAtt);
+
+  G4VisAttributes* VALAVisAtt = new G4VisAttributes();
+  VALAVisAtt-> SetVisibility(true);
+  VALAVisAtt-> SetColour(0.5, 0.5, 0.5);//
+  logVALA->SetVisAttributes(VALAVisAtt);
+
+  G4VisAttributes* VRAAVisAtt = new G4VisAttributes();
+  VRAAVisAtt-> SetVisibility(true);
+  VRAAVisAtt-> SetColour(0.5, 0.5, 0.0);//
+  logVRAA->SetVisAttributes(VRAAVisAtt);
+
+  G4VisAttributes* VPLAVisAtt = new G4VisAttributes();
+  VPLAVisAtt-> SetVisibility(true);
+  VPLAVisAtt-> SetColour(0.0, 0.5, 1.0);//blue
+  logVPLA->SetVisAttributes(VPLAVisAtt);
+
+  G4VisAttributes* VRPAVisAtt = new G4VisAttributes();
+  VRPAVisAtt-> SetVisibility(true);
+  VRPAVisAtt-> SetColour(0.5, 0.5, 0.0);//
+  logVRPA->SetVisAttributes(VRPAVisAtt);
+
+   return world->getPhysic();
+}

@@ -23,41 +23,30 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file PhysicsList.hh
-/// \brief Definition of the PhysicsList class
+// $Id: B1ActionInitialization.hh 68058 2013-03-13 14:47:43Z gcosmo $
 //
-// 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...... 
+/// \file B1ActionInitialization.hh
+/// \brief Definition of the B1ActionInitialization class
 
-#ifndef PhysicsList_h
-#define PhysicsList_h 1
+#ifndef ActionInitialization_h
+#define ActionInitialization_h 1
 
-#include "G4VUserPhysicsList.hh"
-#include "G4VModularPhysicsList.hh"
-#include "G4EmConfigurator.hh"
+#include "G4VUserActionInitialization.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+/// Action initialization class.
 
-class PhysicsList: public G4VUserPhysicsList
+class ActionInitialization : public G4VUserActionInitialization
 {
   public:
-    PhysicsList();
-    ~PhysicsList();
+    ActionInitialization();
+    virtual ~ActionInitialization();
 
-  protected:
-    // Construct particle and physics
-    void ConstructParticle() override;
-    void ConstructProcess()  override;
-
-  private:
-      G4VPhysicsConstructor* emPhysicsList;
-      G4EmConfigurator emConfigurator;
+    virtual void BuildForMaster() const;
+    virtual void Build() const;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
 
-
-
+    

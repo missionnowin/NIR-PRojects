@@ -23,41 +23,45 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file PhysicsList.hh
-/// \brief Definition of the PhysicsList class
+// $Id: B1EventAction.cc 75117 2013-10-28 09:38:37Z gcosmo $
 //
-// 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...... 
+/// \file B1EventAction.cc
+/// \brief Implementation of the B1EventAction class
 
-#ifndef PhysicsList_h
-#define PhysicsList_h 1
+#include "EventAction.hh"
+#include "Run.hh"
 
-#include "G4VUserPhysicsList.hh"
-#include "G4VModularPhysicsList.hh"
-#include "G4EmConfigurator.hh"
+#include "G4Event.hh"
+#include "G4RunManager.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-class PhysicsList: public G4VUserPhysicsList
-{
-  public:
-    PhysicsList();
-    ~PhysicsList();
-
-  protected:
-    // Construct particle and physics
-    void ConstructParticle() override;
-    void ConstructProcess()  override;
-
-  private:
-      G4VPhysicsConstructor* emPhysicsList;
-      G4EmConfigurator emConfigurator;
-};
+EventAction::EventAction()
+: G4UserEventAction(),
+  fEdep(0.)
+{} 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#endif
+EventAction::~EventAction()
+{}
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+void EventAction::BeginOfEventAction(const G4Event*)
+{    
+  fEdep = 0.;
+}
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void EventAction::EndOfEventAction(const G4Event*)
+{   
+  // accumulate statistics in B1Run
+  Run* run 
+    = static_cast<Run*>(
+        G4RunManager::GetRunManager()->GetNonConstCurrentRun());
+  run->AddEdep(fEdep);
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

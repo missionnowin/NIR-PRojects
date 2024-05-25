@@ -1,0 +1,101 @@
+
+#include "RunAction.hh"
+#include "PrimaryGeneratorAction.hh"
+#include "DetectorConstruction.hh"
+#include "Run.hh"
+
+#include "G4RunManager.hh"
+#include "G4LogicalVolumeStore.hh"
+#include "G4LogicalVolume.hh"
+#include "G4UnitsTable.hh"
+#include "G4SystemOfUnits.hh"
+#include "HistoManager.hh"
+#include <G4AnalysisManager.hh>
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+RunAction::RunAction(HistoManager* histo)
+: G4UserRunAction(),fHistoManager(histo)
+{ 
+  // Book predefined histograms
+//  fHistoManager = new HistoManager();
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+RunAction::~RunAction()
+{
+delete fHistoManager;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G4Run* RunAction::GenerateRun()
+{
+  return new Run; 
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void RunAction::BeginOfRunAction(const G4Run*)
+{ 
+  //Inform the runManager to save random number seed
+  G4RunManager::GetRunManager()->SetRandomNumberStore(false);
+
+  //Book root tree and histos
+  fHistoManager->BookTree(); 
+
+  //Open file for saving histograms
+  G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+  if ( analysisManager->IsActive() ) {
+    analysisManager->OpenFile();
+  }
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void RunAction::EndOfRunAction(const G4Run* run)
+{
+  G4int nofEvents = run->GetNumberOfEvent();
+  if (nofEvents == 0) return;
+  
+  const Run* b1Run = static_cast<const Run*>(run);
+
+  // Compute enegy deposit
+  G4double edep  = b1Run->GetEdep();
+  G4double edep2 = b1Run->GetEdep2();
+  G4double rms = edep2 - edep*edep/nofEvents;
+  if (rms > 0.) rms = std::sqrt(rms); else rms = 0.;
+
+  // Run conditions
+
+  G4String runCondition;
+
+ // Save G4 histograms in file
+ G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+  if ( analysisManager->IsActive() ) {    
+    analysisManager->Write();
+    analysisManager->CloseFile();
+  }  
+
+ // Save ROOT histograms in file
+  fHistoManager->SaveTree();         
+
+  // Print
+  if (IsMaster()) {
+    G4cout
+     << "\n--------------------End of Global Run-----------------------";
+  }
+  else {
+    G4cout
+     << "\n--------------------End of Local Run------------------------";
+  }
+  
+  G4cout
+     << "\n The run consists of " << nofEvents << " events"
+ //    << "\n Enery deposited in all volumes: " << G4BestUnit(edep,"Energy") 
+     << "\n------------------------------------------------------------\n"
+     << G4endl;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

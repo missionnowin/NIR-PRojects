@@ -23,41 +23,38 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file PhysicsList.hh
-/// \brief Definition of the PhysicsList class
+// $Id: B1SteppingAction.hh 74483 2013-10-09 13:37:06Z gcosmo $
 //
-// 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...... 
+/// \file B1SteppingAction.hh
+/// \brief Definition of the B1SteppingAction class
 
-#ifndef PhysicsList_h
-#define PhysicsList_h 1
+#ifndef SteppingAction_h
+#define SteppingAction_h 1
 
-#include "G4VUserPhysicsList.hh"
-#include "G4VModularPhysicsList.hh"
-#include "G4EmConfigurator.hh"
+#include "G4UserSteppingAction.hh"
+#include "globals.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+class EventAction;
 
-class PhysicsList: public G4VUserPhysicsList
+class G4LogicalVolume;
+
+/// Stepping action class
+/// 
+
+class SteppingAction : public G4UserSteppingAction
 {
   public:
-    PhysicsList();
-    ~PhysicsList();
+    SteppingAction(EventAction* eventAction);
+    virtual ~SteppingAction();
 
-  protected:
-    // Construct particle and physics
-    void ConstructParticle() override;
-    void ConstructProcess()  override;
+    // method from the base class
+    virtual void UserSteppingAction(const G4Step*);
 
   private:
-      G4VPhysicsConstructor* emPhysicsList;
-      G4EmConfigurator emConfigurator;
+    EventAction*  fEventAction;
+    G4LogicalVolume* fScoringVolume;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
-
-
-

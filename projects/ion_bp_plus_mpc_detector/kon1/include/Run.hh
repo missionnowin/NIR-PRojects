@@ -23,41 +23,43 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file PhysicsList.hh
-/// \brief Definition of the PhysicsList class
+// $Id: B1Run.hh 66536 2012-12-19 14:32:36Z ihrivnac $
 //
-// 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...... 
+/// \file B1Run.hh
+/// \brief Definition of the B1Run class
 
-#ifndef PhysicsList_h
-#define PhysicsList_h 1
+#ifndef Run_h
+#define Run_h 1
 
-#include "G4VUserPhysicsList.hh"
-#include "G4VModularPhysicsList.hh"
-#include "G4EmConfigurator.hh"
+#include "G4Run.hh"
+#include "globals.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+class G4Event;
 
-class PhysicsList: public G4VUserPhysicsList
+/// Run class
+///
+
+class Run : public G4Run
 {
   public:
-    PhysicsList();
-    ~PhysicsList();
+    Run();
+    virtual ~Run();
 
-  protected:
-    // Construct particle and physics
-    void ConstructParticle() override;
-    void ConstructProcess()  override;
+    // method from the base class
+    virtual void Merge(const G4Run*);
+    
+    void AddEdep (G4double edep); 
+
+    // get methods
+    G4double GetEdep()  const { return fEdep; }
+    G4double GetEdep2() const { return fEdep2; }
 
   private:
-      G4VPhysicsConstructor* emPhysicsList;
-      G4EmConfigurator emConfigurator;
+    G4double  fEdep;
+    G4double  fEdep2;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
-
-
 
