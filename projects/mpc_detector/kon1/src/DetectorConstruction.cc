@@ -14,6 +14,7 @@
 #include <G4MaterialCutsCouple.hh>
 
 using namespace std;
+using namespace CLHEP;
 
 #define Mat(x) (G4NistManager::Instance()->FindOrBuildMaterial(x))
 
@@ -41,7 +42,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4NistManager* nist = G4NistManager::Instance();
 
     //Worls
-    world = new World(350*um, 350*um, 350*um, Mat("G4_Galactic"));
+    world = new World(60 * mm, 60 * mm, 60 * mm, Mat("G4_Galactic"));
     G4RotationMatrix* rotation = new G4RotationMatrix();
     rotation->rotateX(-8*degree);
 
@@ -59,7 +60,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     SiO2PbO -> AddElement(O, 0.62);
 
     //Box
-    G4Box *solidTgt = new G4Box("solidTgt", 100*um, 100*um, 100*um);
+    G4Tubs *solidTgt = new G4Tubs("solidTgt", 30.2, 45 * mm, 360 * um, 0, 2 * pi);
     G4LogicalVolume *logiclTgt = new G4LogicalVolume(solidTgt, SiO2PbO, "logiclTgt");
     G4PVPlacement *physilTgt = new G4PVPlacement(rotation, G4ThreeVector(0,0,0*cm), logiclTgt, "physilTgt", world->getLogic(), false, 0);
     G4UserLimits* electronLimits = new G4UserLimits();
@@ -76,6 +77,29 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     orange -> SetForceWireframe(true);
     logiclTgt -> SetVisAttributes(orange);
     int count = 0;
+    double step = 12 * um;
+
+    for (double i = 30.2 * mm; i < 30.4 * mm; i += step) {
+        for (double j = 0; j < 2.0 * pi * i; j += step) {
+            string nameLogic = "logiclCyl";
+            string namePhysics = "physicsCyl";
+            string nameSolid = "solidCyl";
+            nameLogic.append(to_string(count));
+            namePhysics.append(to_string(count));
+            nameSolid.append(to_string(count));
+
+            G4Tubs* solidCyl = new G4Tubs(nameSolid, 0, 5 * um, 350 * um, 0, 2 * 3.1416);
+            G4LogicalVolume* logiclCyl = new G4LogicalVolume(solidCyl, Mat("G4_AIR"), nameLogic);
+            double angle = 2.0 * pi * i * j / (step * step);
+            G4double x = i * sin(angle);
+            G4double y = i * cos(angle);
+            G4PVPlacement* physilCyl = new G4PVPlacement(rotation, G4ThreeVector(x, y, 0 * um), logiclCyl, namePhysics, world->getLogic(), false, 0);
+
+            G4VisAttributes* purpur = new G4VisAttributes(G4Colour(0.6, 0.4, 0.8));
+            logiclCyl->SetVisAttributes(purpur);
+            count++;
+        }
+    }
 
     for (G4int i=-84; i<90; i=i+12)
      {
@@ -87,7 +111,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
         nameLogic.append(to_string(count));
         namePhysics.append(to_string(count));
         nameSolid.append(to_string(count));
-        G4Tubs *solidCyl = new G4Tubs(nameSolid, 0, 5*um, 100*um, 0, 2*3.1416);
+        G4Tubs *solidCyl = new G4Tubs(nameSolid, 0, 5*um, 350*um, 0, 2*3.1416);
         G4LogicalVolume *logiclCyl = new G4LogicalVolume(solidCyl, Mat("G4_AIR"), nameLogic);
         G4PVPlacement *physilCyl = new G4PVPlacement(rotation, G4ThreeVector(i*um,j*um,k*um), logiclCyl, namePhysics, world->getLogic(), false, 0);
         G4VisAttributes* purpur = new G4VisAttributes(G4Colour(0.6,0.4,0.8));
